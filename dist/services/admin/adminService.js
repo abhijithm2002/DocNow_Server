@@ -82,5 +82,26 @@ class adminService {
             }
         });
     }
+    verifyDocuments(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered verifyDocuments service');
+            try {
+                const doctorData = yield this._doctorRepository.fetchDoctor(id);
+                if (doctorData) {
+                    doctorData.documents_verified = true;
+                    console.log('verify Doctumentss', doctorData.documents_verified);
+                    yield doctorData.save();
+                    return doctorData;
+                }
+                else {
+                    console.log('doctor data is not found');
+                    return null;
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.default = adminService;

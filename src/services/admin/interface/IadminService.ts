@@ -6,6 +6,6 @@ export interface IadminService {
     blockUnblockPatient(id: string, status: boolean): Promise<Patient | null>
     blockUnblockDoctor(id: string, status: boolean): Promise<Doctor | null>
     fetchDoctorList():Promise<Doctor[] | null> 
-
+    verifyDocuments(id: string): Promise<Doctor | null>
 }
 

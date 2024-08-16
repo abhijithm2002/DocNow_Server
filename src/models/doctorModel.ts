@@ -42,6 +42,8 @@ export interface Doctor extends Document {
     photo ?: string
     address ?: Address;
     role: string;
+    bio: string;
+    bookingfees: number;
 }
 
 
@@ -56,6 +58,8 @@ const doctorSchema = new Schema<Doctor>({
     mobile: { type: String, default: '' },
     gender: { type: String, default: '' },
     role: {type: String},
+    bio:{type: String},
+    bookingfees: {type: Number},
     currentWorkingHospital: { type: String, default: '' },
     is_verified:{ type: Boolean, default: false },
     is_blocked: { type: Boolean, default: false },
@@ -64,7 +68,7 @@ const doctorSchema = new Schema<Doctor>({
     workingHospitalContact:{type:String,default:''},
     experienceYears:{type:Number,default:0},
     medicalLicenseNo:{type:String,default:''},
-    documents:[],
+    documents:[{type: String}],
     workingDays: { type: String, default: '' },
     appointments: [{
         id: { type: String }

@@ -66,4 +66,22 @@ export default class adminService implements IadminService {
             throw error
         }
     }
+
+    async verifyDocuments(id: string): Promise<Doctor | null> {
+        console.log('entered verifyDocuments service')
+        try {
+            const doctorData = await this._doctorRepository.fetchDoctor(id);
+            if(doctorData) {
+                doctorData.documents_verified = true;
+                console.log('verify Doctumentss', doctorData.documents_verified)
+                await doctorData.save();
+                return doctorData
+            } else {
+                console.log('doctor data is not found')
+                return null
+            }
+        } catch (error) {
+            throw error
+        }
+    }
 }

@@ -1,6 +1,10 @@
 import { Router } from "express";
 import VerificationController from "../controllers/verificationController";
 import doctorController from "../controllers/doctorController";
+import protectdoctor, { refreshAccessTokenDoctor } from "../middleware/authDoctor";
+
+
+
 
 const router = Router();
 const DoctorController = new doctorController();
@@ -12,5 +16,12 @@ router.post('/otp-verify', verificationController.otpverify.bind(verificationCon
 router.post('/resend-otp', verificationController.resendOtp.bind(verificationController))
 router.post('/doctor-login', verificationController.doctorLogin.bind(verificationController))
 router.post('/google-login', verificationController.doctorGoogleLogin.bind(verificationController))
+router.patch('/edit-profile', protectdoctor, DoctorController.editDoctor.bind(DoctorController));
+router.patch('/uploadDocuments', protectdoctor, DoctorController.uploadDocuments.bind(DoctorController))
+router.post('/updateSlots', protectdoctor, DoctorController.updateSlots.bind(DoctorController))
+router.get('/fetchSlots', protectdoctor, DoctorController.fetchSlots.bind(DoctorController))
+router.get('/getDocuments',protectdoctor,DoctorController.fetchDocuments.bind(DoctorController))
+
+router.post('/refresh-token', refreshAccessTokenDoctor)
 
 export const doctorRoutes = router;

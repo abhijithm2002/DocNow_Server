@@ -46,7 +46,7 @@ dotenv_1.default.config();
 (0, db_1.default)();
 const app = (0, express_1.default)();
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
 };

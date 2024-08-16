@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
+const slotModel_1 = __importDefault(require("../models/slotModel"));
 class doctorRepository {
     signupDoctor(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -47,6 +48,66 @@ class doctorRepository {
             }
             catch (error) {
                 throw error;
+            }
+        });
+    }
+    editSingleDoctor(doctorData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered repository of editsingledoctor', doctorData.email);
+            try {
+                return yield doctorModel_1.default.findOne({ email: doctorData.email }).exec();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    insertSlots(slotsData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Inserting Slots Data:', slotsData);
+                const result = yield slotModel_1.default.insertMany(slotsData);
+                console.log('Inserted Slots:', result);
+                return result;
+            }
+            catch (error) {
+                console.error('Error in insertSlots:', error);
+                throw error;
+            }
+        });
+    }
+    fetchSlots(id, date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered fetch slots repo');
+            try {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                endDate.setDate(endDate.getDate() + 1); // Move to the next day
+                const slots = yield slotModel_1.default.find({
+                    doctorId: id,
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
+                }).exec();
+                console.log('slotsssss', slots);
+                return slots;
+            }
+            catch (error) {
+                console.error('Error fetching slots:', error);
+                throw new Error('Error fetching slots');
+            }
+        });
+    }
+    fetchDocuments(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const doctor = yield doctorModel_1.default.findOne({ email }).select('documents documents_verified');
+                console.log(doctor);
+                return doctor;
+            }
+            catch (error) {
+                return null;
             }
         });
     }

@@ -44,7 +44,7 @@ const generateJwt = (data: Payload): Promise<Tokens> => {
     return new Promise((resolve, reject) => {
       try {
         const tokens: Tokens = { accessToken: '', refreshToken: '' };
-        const options = { expiresIn: '1hr' }; // Adjusted to 1 hour as per your requirement
+        const options = { expiresIn: '8hr' }; // Adjusted to 1 hour as per your requirement
         const payload: Payload = {};
   
         if (data._id) {

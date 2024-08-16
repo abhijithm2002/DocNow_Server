@@ -29,7 +29,7 @@ class patientService {
     }
     editPatient(userData) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e;
             console.log('coming to edit patient service');
             try {
                 const data = yield this._patientRepository.editSinglePatient(userData);
@@ -39,6 +39,7 @@ class patientService {
                     data.email = (_b = userData.email) !== null && _b !== void 0 ? _b : data.email;
                     data.mobile = (_c = userData.mobile) !== null && _c !== void 0 ? _c : data.mobile;
                     data.photo = (_d = userData.photo) !== null && _d !== void 0 ? _d : data.photo;
+                    data.gender = (_e = userData.gender) !== null && _e !== void 0 ? _e : data.gender;
                     console.log('updated', data);
                     yield data.save();
                     return data;

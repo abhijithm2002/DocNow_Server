@@ -133,8 +133,14 @@ class VerificationController {
                 if (is_blocked) {
                     return res.status(403).json({ message: 'Doctor is blocked' });
                 }
-                let tokens = yield (0, jwt_1.default)(data);
-                return res.status(200).json({ message: 'Doctor Logged in', email, name, photo, _id, tokens });
+                let { refreshToken, accessToken } = yield (0, jwt_1.default)(data);
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'lax',
+                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                });
+                return res.status(200).json({ message: 'Doctor Logged in', doctor: data, accessToken });
             }
             catch (error) {
                 console.log('Error during doctor Login', error);
@@ -237,8 +243,14 @@ class VerificationController {
                 if (is_blocked) {
                     return res.status(403).json({ message: 'Doctor is blocked' });
                 }
-                let tokens = yield (0, jwt_1.default)(doctor);
-                return res.status(200).json({ message: 'Login successful', email, name, photo, _id, tokens });
+                let { refreshToken, accessToken } = yield (0, jwt_1.default)(doctor);
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'lax',
+                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                });
+                return res.status(200).json({ message: 'Login successful', doctor: doctor, accessToken });
             }
             catch (error) {
                 console.log('Error during Google Login', error);

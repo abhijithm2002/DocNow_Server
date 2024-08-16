@@ -19,7 +19,7 @@ type User = Doctor|Patient;
 declare global {
   namespace Express {
     interface Request {
-      user?: Patient;
+      user?: User;
     }
   }
 }
@@ -46,7 +46,7 @@ const renewAccessToken = (userId: string): Promise<string> => {
     jwt.sign(
       { userId: userId },
       process.env.JWT_KEY_SECRET as string,
-      { expiresIn: '1hr' },
+      { expiresIn: '8hr' },
       (err, token) => {
         if (err) {
           reject(err);
@@ -62,7 +62,7 @@ const renewAccessToken = (userId: string): Promise<string> => {
 // @route   < Middleware >
 // @access  Private
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('protect vann');
+  console.log('protect vann',req.headers.authorization);
   
   // WHEN WE HAVE AN ACCESS TOKEN
   if (req.headers.authorization) {
@@ -150,7 +150,7 @@ export const refreshAccessToken = (req: Request, res: Response) => {
       verifyUser(decodedRefreshToken)
         .then(async (user) => {
           console.log('hai');
-          console.log(user);
+          console.log('token user: ///',user);
           
           if (user && !user?.is_blocked) {
             const newAccessToken = await renewAccessToken(

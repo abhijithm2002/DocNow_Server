@@ -19,5 +19,5 @@ router.post('/resend-otp', verificationController.resendOtp.bind(verificationCon
 router.post('/login', verificationController.patientLogin.bind(verificationController));
 router.post('/google-login', verificationController.googleLogin.bind(verificationController));
 router.post('/refresh-token', authMiddleware_1.refreshAccessToken);
-router.post('/edit-profile', authMiddleware_2.default, PatientController.editPatient.bind(PatientController));
+router.patch('/edit-profile', authMiddleware_2.default, PatientController.editPatient.bind(PatientController));
 exports.patientRoutes = router;

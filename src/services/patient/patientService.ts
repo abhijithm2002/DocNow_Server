@@ -29,6 +29,7 @@ export default class patientService implements IpatientService {
                 data.email = userData.email ?? data.email
                 data.mobile = userData.mobile ?? data.mobile
                 data.photo = userData.photo ?? data.photo
+                data.gender = userData.gender ?? data.gender
                 console.log('updated',data);
                 
                 await data.save();

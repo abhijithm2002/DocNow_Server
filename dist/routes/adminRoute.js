@@ -15,4 +15,5 @@ router.get('/fetchUserList', AdminController.fetchUserList.bind(AdminController)
 router.patch('/patient/:userId/blockUnblock', AdminController.blockUnblockPatient.bind(AdminController));
 router.patch('/doctor/:userId/blockUnblock', AdminController.blockUnblockDoctor.bind(AdminController));
 router.get('/fetchDoctorList', AdminController.fetchDoctorList.bind(AdminController));
+router.patch('/doctor/:doctorId/verify', AdminController.verifyDocuments.bind(AdminController));
 exports.adminRoutes = router;

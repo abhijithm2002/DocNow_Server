@@ -36,7 +36,7 @@ const verifyUser = (decodedToken) => {
 // @access  Private
 const renewAccessToken = (userId) => {
     return new Promise((resolve, reject) => {
-        jsonwebtoken_1.default.sign({ userId: userId }, process.env.JWT_KEY_SECRET, { expiresIn: '1hr' }, (err, token) => {
+        jsonwebtoken_1.default.sign({ userId: userId }, process.env.JWT_KEY_SECRET, { expiresIn: '8hr' }, (err, token) => {
             if (err) {
                 reject(err);
             }
@@ -51,7 +51,7 @@ const renewAccessToken = (userId) => {
 // @access  Private
 const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log('protect vann');
+    console.log('protect vann', req.headers.authorization);
     // WHEN WE HAVE AN ACCESS TOKEN
     if (req.headers.authorization) {
         try {
@@ -133,7 +133,7 @@ const refreshAccessToken = (req, res) => {
             verifyUser(decodedRefreshToken)
                 .then((user) => __awaiter(void 0, void 0, void 0, function* () {
                 console.log('hai');
-                console.log(user);
+                console.log('token user: ///', user);
                 if (user && !(user === null || user === void 0 ? void 0 : user.is_blocked)) {
                     const newAccessToken = yield renewAccessToken(decodedRefreshToken === null || decodedRefreshToken === void 0 ? void 0 : decodedRefreshToken.userId);
                     res.status(200).send({ accessToken: newAccessToken });

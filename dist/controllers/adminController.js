@@ -83,5 +83,23 @@ class adminController {
             }
         });
     }
+    verifyDocuments(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered verifyDocuments controller');
+            try {
+                const { doctorId } = req.params;
+                const doctorData = yield this._adminService.verifyDocuments(doctorId);
+                if (doctorData) {
+                    return res.status(200).json({ message: 'documents verified successfully', doctorData });
+                }
+                else {
+                    return res.status(400).json({ message: 'documents verification unsuccessfull' });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.default = adminController;
