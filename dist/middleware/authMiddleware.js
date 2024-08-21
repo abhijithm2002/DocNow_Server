@@ -51,7 +51,6 @@ const renewAccessToken = (userId) => {
 // @access  Private
 const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log('protect vann', req.headers.authorization);
     // WHEN WE HAVE AN ACCESS TOKEN
     if (req.headers.authorization) {
         try {

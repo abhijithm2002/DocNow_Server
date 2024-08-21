@@ -3,7 +3,7 @@ import mongoose, { Schema, model, Document } from "mongoose";
 export interface ISlot extends Document {
     doctorId: Schema.Types.ObjectId;
     date: Date;
-    shifts: string[];  // Changed to string array
+    shifts: string[];  
     createdAt: Date;
 }
 

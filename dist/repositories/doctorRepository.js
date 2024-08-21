@@ -65,9 +65,13 @@ class doctorRepository {
     insertSlots(slotsData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Inserting Slots Data:', slotsData);
-                const result = yield slotModel_1.default.insertMany(slotsData);
-                console.log('Inserted Slots:', result);
+                console.log('Inserting or Updating Slots Data:', slotsData);
+                const promises = slotsData.map(slot => {
+                    return slotModel_1.default.findOneAndUpdate({ doctorId: slot.doctorId, date: slot.date }, { shifts: slot.shifts, createdAt: slot.createdAt }, { upsert: true, new: true } // upsert: true to insert if not found, new: true to return the updated document
+                    );
+                });
+                const result = yield Promise.all(promises);
+                console.log('Inserted or Updated Slots:', result);
                 return result;
             }
             catch (error) {
@@ -82,7 +86,7 @@ class doctorRepository {
             try {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
-                endDate.setDate(endDate.getDate() + 1); // Move to the next day
+                endDate.setDate(endDate.getDate() + 1);
                 const slots = yield slotModel_1.default.find({
                     doctorId: id,
                     date: {
@@ -96,6 +100,26 @@ class doctorRepository {
             catch (error) {
                 console.error('Error fetching slots:', error);
                 throw new Error('Error fetching slots');
+            }
+        });
+    }
+    deleteSlots(slotId, selectedShifts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered delete slots repo');
+            try {
+                const slot = yield slotModel_1.default.findById(slotId);
+                if (!slot) {
+                    console.log('Slot not found');
+                    return null;
+                }
+                slot.shifts = slot.shifts.filter(shift => !selectedShifts.includes(shift));
+                const updatedSlot = yield slot.save();
+                console.log('Updated slot after deletion:', updatedSlot);
+                return updatedSlot;
+            }
+            catch (error) {
+                console.error('Error in deleteSlots:', error);
+                throw error;
             }
         });
     }

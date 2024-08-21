@@ -44,6 +44,7 @@ router.patch('/edit-profile', authDoctor_1.default, DoctorController.editDoctor.
 router.patch('/uploadDocuments', authDoctor_1.default, DoctorController.uploadDocuments.bind(DoctorController));
 router.post('/updateSlots', authDoctor_1.default, DoctorController.updateSlots.bind(DoctorController));
 router.get('/fetchSlots', authDoctor_1.default, DoctorController.fetchSlots.bind(DoctorController));
+router.patch('/deleteSlots', authDoctor_1.default, DoctorController.deleteSlots.bind(DoctorController));
 router.get('/getDocuments', authDoctor_1.default, DoctorController.fetchDocuments.bind(DoctorController));
 router.post('/refresh-token', authDoctor_1.refreshAccessTokenDoctor);
 exports.doctorRoutes = router;

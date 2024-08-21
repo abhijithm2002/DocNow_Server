@@ -102,11 +102,11 @@ class doctorService {
                 const end = new Date(endDate);
                 let currentDate = new Date(start);
                 let allSlots = [];
-                const startTimeDate = new Date(startTime); // Parsing startTime
-                const endTimeDate = new Date(endTime); // Parsing endTime
+                const startTimeDate = new Date(startTime);
+                const endTimeDate = new Date(endTime);
                 while (currentDate <= end) {
                     const daySlots = [];
-                    let shiftStart = new Date(currentDate); // clone the date
+                    let shiftStart = new Date(currentDate);
                     shiftStart.setHours(startTimeDate.getHours(), startTimeDate.getMinutes(), 0, 0);
                     const shiftEnd = new Date(currentDate);
                     shiftEnd.setHours(endTimeDate.getHours(), endTimeDate.getMinutes(), 0, 0);
@@ -119,20 +119,36 @@ class doctorService {
                         daySlots.push(`${shiftStartFormatted} - ${shiftEndFormatted}`);
                         shiftStart = new Date(shiftEndTime.getTime() + breakTime * 60000);
                     }
-                    const slot = new slotModel_1.default({
+                    // Check if slot exists for the current date
+                    let slot = yield slotModel_1.default.findOne({
                         doctorId,
-                        date: new Date(currentDate), // ensure currentDate is a new Date object
-                        shifts: daySlots,
-                        createdAt: new Date(),
+                        date: new Date(currentDate)
                     });
-                    allSlots.push(slot);
-                    currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1)); // Move to the next day
+                    if (slot) {
+                        // Update existing slot
+                        slot.shifts = daySlots;
+                        slot.createdAt = new Date(); // Optionally update createdAt
+                        yield slot.save();
+                    }
+                    else {
+                        // Create new slot
+                        slot = new slotModel_1.default({
+                            doctorId,
+                            date: new Date(currentDate),
+                            shifts: daySlots,
+                            createdAt: new Date(),
+                        });
+                        allSlots.push(slot);
+                    }
+                    currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
                 }
-                console.log('Generated Slots:', allSlots);
-                // Call repository to save slots
-                const savedSlots = yield this._doctorRepository.insertSlots(allSlots);
-                console.log('saved slots ////', savedSlots);
-                return savedSlots;
+                // Save new slots
+                if (allSlots.length > 0) {
+                    const savedSlots = yield this._doctorRepository.insertSlots(allSlots);
+                    console.log('saved slots ////', savedSlots);
+                    return savedSlots;
+                }
+                return allSlots; // Return the updated slots
             }
             catch (error) {
                 console.error('Error in updateSlots service:', error);
@@ -145,6 +161,17 @@ class doctorService {
             console.log('entered fetch slots service');
             try {
                 return yield this._doctorRepository.fetchSlots(id, date);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    deleteSlots(slotId, selectedShifts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered delete slots service');
+            try {
+                return yield this._doctorRepository.deleteSlots(slotId, selectedShifts);
             }
             catch (error) {
                 throw error;

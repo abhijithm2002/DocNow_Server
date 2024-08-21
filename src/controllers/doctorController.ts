@@ -147,6 +147,23 @@ export default class doctorController implements IdoctorController {
             throw error
         }
     }
+
+
+    async deleteSlots(req: Request, res: Response, next: NextFunction) {
+        console.log('entered delete slots controller')
+        try {
+            const {slotId, selectedShifts} = req.body;
+            const updatedSlots = await this._doctorService.deleteSlots(slotId,selectedShifts)
+            if(updatedSlots) {
+                return res.status(200).json({message: 'slot deleted successfully',slot: updatedSlots})
+            } else {
+                return res.status(400).json({message: 'slot deletion unsuccessfull'})
+            }
+        } catch (error) {
+            console.log('error in delete slots', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
     
 }
 

@@ -74,7 +74,7 @@ const protectdoctor = async (req: Request, res: Response, next: NextFunction) =>
               next();
             } else {
               // User has been blocked
-              res.status(403).json({
+              res.status(401).json({
                 message: "User has been blocked",
                 status: 403,
                 error_code: "FORBIDDEN",

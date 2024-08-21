@@ -13,9 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const patientRepository_1 = __importDefault(require("../../repositories/patientRepository"));
+const doctorRepository_1 = __importDefault(require("../../repositories/doctorRepository"));
 class patientService {
     constructor() {
         this._patientRepository = new patientRepository_1.default();
+        this._doctorRespository = new doctorRepository_1.default();
     }
     signupPatient(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -47,6 +49,17 @@ class patientService {
                 else {
                     return null;
                 }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchDoctorDetails(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered fetchDoctor details');
+            try {
+                return yield this._doctorRespository.fetchDoctor(id);
             }
             catch (error) {
                 throw error;

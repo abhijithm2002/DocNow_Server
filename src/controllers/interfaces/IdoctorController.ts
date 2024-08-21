@@ -7,4 +7,6 @@ export interface IdoctorController {
     fetchDocuments(req: Request, res: Response, next: NextFunction): void;
     updateSlots(req: Request, res: Response, next: NextFunction): void;
     fetchSlots(req: Request, res: Response, next: NextFunction): void;
+    deleteSlots(req: Request, res: Response, next: NextFunction): void;
+    
 }

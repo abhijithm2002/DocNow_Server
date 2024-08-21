@@ -20,4 +20,6 @@ router.post('/login', verificationController.patientLogin.bind(verificationContr
 router.post('/google-login', verificationController.googleLogin.bind(verificationController));
 router.post('/refresh-token', authMiddleware_1.refreshAccessToken);
 router.patch('/edit-profile', authMiddleware_2.default, PatientController.editPatient.bind(PatientController));
+router.get('/fetchDoctorDetails', authMiddleware_2.default, PatientController.fetchDoctorDetails.bind(PatientController));
+router.get('/fetchSlots', PatientController.fetchSlots.bind(PatientController));
 exports.patientRoutes = router;

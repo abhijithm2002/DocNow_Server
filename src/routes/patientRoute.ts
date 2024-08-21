@@ -18,6 +18,7 @@ router.post('/login', verificationController.patientLogin.bind(verificationContr
 router.post('/google-login', verificationController.googleLogin.bind(verificationController));
 router.post('/refresh-token', refreshAccessToken)
 router.patch('/edit-profile',protect, PatientController.editPatient.bind(PatientController))
-
+router.get('/fetchDoctorDetails', protect, PatientController.fetchDoctorDetails.bind(PatientController))
+router.get('/fetchSlots', PatientController.fetchSlots.bind(PatientController))
 
 export const patientRoutes = router;

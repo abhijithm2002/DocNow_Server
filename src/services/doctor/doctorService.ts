@@ -89,12 +89,12 @@ export default class doctorService implements IdoctorService {
             let currentDate = new Date(start);
             let allSlots: ISlot[] = [];
     
-            const startTimeDate = new Date(startTime); // Parsing startTime
-            const endTimeDate = new Date(endTime); // Parsing endTime
+            const startTimeDate = new Date(startTime);
+            const endTimeDate = new Date(endTime);
     
             while (currentDate <= end) {
                 const daySlots: string[] = [];
-                let shiftStart = new Date(currentDate); // clone the date
+                let shiftStart = new Date(currentDate);
                 shiftStart.setHours(startTimeDate.getHours(), startTimeDate.getMinutes(), 0, 0);
                 const shiftEnd = new Date(currentDate);
                 shiftEnd.setHours(endTimeDate.getHours(), endTimeDate.getMinutes(), 0, 0);
@@ -110,24 +110,39 @@ export default class doctorService implements IdoctorService {
                     shiftStart = new Date(shiftEndTime.getTime() + breakTime * 60000);
                 }
     
-                const slot = new Slots({
+                // Check if slot exists for the current date
+                let slot = await Slots.findOne({
                     doctorId,
-                    date: new Date(currentDate), // ensure currentDate is a new Date object
-                    shifts: daySlots,
-                    createdAt: new Date(),
+                    date: new Date(currentDate)
                 });
     
-                allSlots.push(slot);
+                if (slot) {
+                    // Update existing slot
+                    slot.shifts = daySlots;
+                    slot.createdAt = new Date(); // Optionally update createdAt
+                    await slot.save();
+                } else {
+                    // Create new slot
+                    slot = new Slots({
+                        doctorId,
+                        date: new Date(currentDate),
+                        shifts: daySlots,
+                        createdAt: new Date(),
+                    });
+                    allSlots.push(slot);
+                }
     
-                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1)); // Move to the next day
+                currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
             }
     
-            console.log('Generated Slots:', allSlots);
+            // Save new slots
+            if (allSlots.length > 0) {
+                const savedSlots = await this._doctorRepository.insertSlots(allSlots);
+                console.log('saved slots ////', savedSlots);
+                return savedSlots;
+            }
     
-            // Call repository to save slots
-            const savedSlots = await this._doctorRepository.insertSlots(allSlots);
-            console.log('saved slots ////', savedSlots);
-            return savedSlots;
+            return allSlots; // Return the updated slots
     
         } catch (error) {
             console.error('Error in updateSlots service:', error);
@@ -136,10 +151,21 @@ export default class doctorService implements IdoctorService {
     }
     
     
+    
     async fetchSlots(id: string, date: string): Promise<ISlot[] | null> {
         console.log('entered fetch slots service')
         try {
             return await this._doctorRepository.fetchSlots(id, date);
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    async deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null> {
+        console.log('entered delete slots service')
+        try {
+            return await this._doctorRepository.deleteSlots(slotId, selectedShifts)
         } catch (error) {
             throw error
         }

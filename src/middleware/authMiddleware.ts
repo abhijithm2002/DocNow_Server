@@ -62,7 +62,7 @@ const renewAccessToken = (userId: string): Promise<string> => {
 // @route   < Middleware >
 // @access  Private
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('protect vann',req.headers.authorization);
+  
   
   // WHEN WE HAVE AN ACCESS TOKEN
   if (req.headers.authorization) {

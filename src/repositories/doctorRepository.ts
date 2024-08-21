@@ -44,15 +44,26 @@ export default class doctorRepository implements IdoctorRepository {
 
     async insertSlots(slotsData: ISlot[]): Promise<ISlot[] | null> {
         try {
-            console.log('Inserting Slots Data:', slotsData);
-            const result = await Slots.insertMany(slotsData);
-            console.log('Inserted Slots:', result);
+            console.log('Inserting or Updating Slots Data:', slotsData);
+    
+            const promises = slotsData.map(slot => {
+                return Slots.findOneAndUpdate(
+                    { doctorId: slot.doctorId, date: slot.date },
+                    { shifts: slot.shifts, createdAt: slot.createdAt },
+                    { upsert: true, new: true } // upsert: true to insert if not found, new: true to return the updated document
+                );
+            });
+    
+            const result = await Promise.all(promises);
+            console.log('Inserted or Updated Slots:', result);
             return result;
+    
         } catch (error) {
             console.error('Error in insertSlots:', error);
             throw error;
         }
     }
+    
 
 
     async fetchSlots(id: string, date: string): Promise<ISlot[] | null> {
@@ -60,7 +71,7 @@ export default class doctorRepository implements IdoctorRepository {
         try {
             const startDate = new Date(date);
             const endDate = new Date(date);
-            endDate.setDate(endDate.getDate() + 1); // Move to the next day
+            endDate.setDate(endDate.getDate() + 1); 
     
             const slots = await Slots.find({
                 doctorId: id,
@@ -78,6 +89,26 @@ export default class doctorRepository implements IdoctorRepository {
         }
     }
     
+
+    async deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null> {
+        console.log('entered delete slots repo')
+        try {
+            const slot = await Slots.findById(slotId);
+
+            if (!slot) {
+                console.log('Slot not found');
+                return null;
+            }
+            slot.shifts = slot.shifts.filter(shift => !selectedShifts.includes(shift));
+            const updatedSlot = await slot.save();
+
+            console.log('Updated slot after deletion:', updatedSlot);
+            return updatedSlot;
+        } catch (error) {
+            console.error('Error in deleteSlots:', error);
+            throw error;  
+        }
+    }
 
     async fetchDocuments(email: string): Promise<Doctor | null> {
         try {

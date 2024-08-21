@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const patientService_1 = __importDefault(require("../services/patient/patientService"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const doctorService_1 = __importDefault(require("../services/doctor/doctorService"));
 class patientController {
     constructor() {
         this._patientService = new patientService_1.default();
+        this._doctorService = new doctorService_1.default();
     }
     signupPatient(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,6 +54,46 @@ class patientController {
             catch (error) {
                 console.error('Error in editprofile:', error);
                 res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    fetchDoctorDetails(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("entered fetchDoctorDetails controller");
+            try {
+                const { id } = req.query;
+                console.log(id);
+                const data = yield this._patientService.fetchDoctorDetails(id);
+                if (data) {
+                    return res.status(200).json({ message: "doctor details fetched successfull", data });
+                }
+                else {
+                    return res.status(400).json({ message: 'fetching doctor details  Unsuccessfull' });
+                }
+            }
+            catch (error) {
+                console.error('Error in fetching doctor details :', error);
+                res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    fetchSlots(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered user fetchSlots controller');
+            try {
+                const { id, date } = req.query;
+                console.log('id', id);
+                console.log('date...', date);
+                const slots = yield this._doctorService.fetchSlots(id, date);
+                if (slots) {
+                    return res.status(200).json({ message: 'slot fetched successfully', slots });
+                }
+                else {
+                    return res.status(400).json({ message: 'slot fetched unsuccessfull' });
+                }
+            }
+            catch (error) {
+                throw error;
             }
         });
     }

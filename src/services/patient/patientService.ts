@@ -1,13 +1,17 @@
 import { Patient } from "../../models/userModel";
 import { IpatientService } from "./interfaces/IpatientService";
 import PatientRepository from "../../repositories/patientRepository";
+import { Doctor } from "../../models/doctorModel";
+import doctorRepository from "../../repositories/doctorRepository";
 
 
 
 export default class patientService implements IpatientService {
     private _patientRepository: PatientRepository
+    private _doctorRespository: doctorRepository
     constructor() {
         this._patientRepository = new PatientRepository()
+        this._doctorRespository = new doctorRepository()
     }
 
     async signupPatient(userData: Partial<Patient>): Promise<Patient | null> {
@@ -37,6 +41,15 @@ export default class patientService implements IpatientService {
             } else {
                 return null
             }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchDoctorDetails(id: string): Promise<Doctor | null> {
+        console.log('entered fetchDoctor details')
+        try {
+            return await this._doctorRespository.fetchDoctor(id)
         } catch (error) {
             throw error
         }

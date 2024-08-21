@@ -9,4 +9,6 @@ export interface IdoctorService {
     fetchDocuments(email: string): Promise<Doctor | null >
     updateSlots(slotsData: any): Promise<ISlot[] | null>
     fetchSlots(id: string, date: string): Promise<ISlot[] | null>
+    deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null>
+    
 }
