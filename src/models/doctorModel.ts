@@ -1,4 +1,5 @@
 import mongoose,{Document, model, Schema} from "mongoose";
+import { WalletTransaction } from "./userModel";
 
 
 
@@ -44,6 +45,13 @@ export interface Doctor extends Document {
     role: string;
     bio: string;
     bookingfees: number;
+    Wallet?: number;
+    WalletHistory?: WalletTransaction[]
+    review?: {
+        patientId: mongoose.Types.ObjectId,
+        rating: number
+    }[],
+    rating?:number
 }
 
 
@@ -83,7 +91,30 @@ const doctorSchema = new Schema<Doctor>({
         country: {type: String}
     },
 
-    photo: { type: String,default:'' }
+    photo: { type: String,default:'' },
+
+    Wallet : { type: Number, default: 0},
+    WalletHistory: [
+        {
+            date: {
+                type : Date,
+                default: Date.now
+            },
+            amount : {
+                type: Number,
+                default: 0
+            },
+            message : {
+                type: String,
+                default: 'Initial Entry'
+            }
+        }
+    ],
+    review : [{
+        patientId: {type : mongoose.Types.ObjectId, ref: 'Patients'},
+        rating: {type: Number, required: true}
+    }],
+    rating: {type: Number, default: 0}
 }, { timestamps: true })
 
 

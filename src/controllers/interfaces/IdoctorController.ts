@@ -8,5 +8,7 @@ export interface IdoctorController {
     updateSlots(req: Request, res: Response, next: NextFunction): void;
     fetchSlots(req: Request, res: Response, next: NextFunction): void;
     deleteSlots(req: Request, res: Response, next: NextFunction): void;
+    fetchAppointments(req: Request, res: Response, next: NextFunction): void;
+    getWalletHistory(req: Request, res: Response, next: NextFunction): void;
     
 }

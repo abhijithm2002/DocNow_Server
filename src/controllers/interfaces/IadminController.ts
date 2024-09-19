@@ -6,4 +6,7 @@ export interface IadminController {
     blockUnblockDoctor(req: Request, res: Response, next: NextFunction):void;
     fetchDoctorList(req: Request, res: Response, next: NextFunction):void;
     verifyDocuments(req: Request, res: Response, next: NextFunction):void;
+    createBanner(req: Request, res: Response, next: NextFunction):void;
+    blockUnblockBanner(req: Request, res: Response, next: NextFunction):void;
+    fetchBanner(req: Request, res: Response, next: NextFunction):void;
 }

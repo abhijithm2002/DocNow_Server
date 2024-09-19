@@ -29,6 +29,23 @@ const userSchema = new mongoose_1.Schema({
         pincode: { type: Number },
         state: { type: String },
         country: { type: String }
-    }
+    },
+    Wallet: { type: Number, default: 0 },
+    WalletHistory: [
+        {
+            date: {
+                type: Date,
+                default: Date.now
+            },
+            amount: {
+                type: Number,
+                default: 0
+            },
+            message: {
+                type: String,
+                default: 'Initial Entry'
+            }
+        }
+    ],
 }, { timestamps: true });
 exports.default = (0, mongoose_1.model)("Patients", userSchema);

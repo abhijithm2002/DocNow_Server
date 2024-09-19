@@ -1,5 +1,6 @@
 import { Doctor } from "../../../models/doctorModel";
-import { ISlot } from '../../../models/slotModel'
+import { ISlot } from '../../../models/slotModel';
+import { IBooking } from "../../../models/bookingModel";
 
 
 export interface IdoctorService {
@@ -10,5 +11,6 @@ export interface IdoctorService {
     updateSlots(slotsData: any): Promise<ISlot[] | null>
     fetchSlots(id: string, date: string): Promise<ISlot[] | null>
     deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null>
-    
+    fetchAppointments(doctorId: string): Promise<IBooking[] | null >
+    getWalletHistory(doctorId: string): Promise<Doctor | null >
 }

@@ -2,6 +2,7 @@ import { Request,Response,NextFunction } from "express";
 import VerificationService from "../services/patient/verificationService";
 import { IadminController } from "./interfaces/IadminController";
 import adminService from "../services/admin/adminService";
+import { stat } from "fs";
 
 
 export default class adminController implements IadminController {
@@ -57,7 +58,6 @@ export default class adminController implements IadminController {
     }
 
     async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
-        console.log('entered doctorlist admin controller')
         try {
             const doctorData = await this._adminService.fetchDoctorList()
             return res.status(200).json({doctorData})
@@ -75,6 +75,54 @@ export default class adminController implements IadminController {
                 return res.status(200).json({message: 'documents verified successfully', doctorData})
             } else {
                 return res.status(400).json({message: 'documents verification unsuccessfull'})
+
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createBanner(req: Request, res: Response, next: NextFunction) {
+        console.log('banner controller')
+        try {
+            const {title, title2, title3, description, imgUrl} = req.body;
+            console.log(req.body)
+            const bannerData = {title, title2, title3, description, imgUrl}
+            const data = await this._adminService.createBanner(bannerData);
+            if(data) {
+                return res.status(200).json({message: 'banner created successfully'})
+            } else {
+                return res.status(400).json({message: 'banner creation Unsucessfull'})
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async blockUnblockBanner(req: Request, res: Response, next: NextFunction) {
+        console.log('controller')
+        try {
+            const {bannerId} = req.params;
+            const {status} = req.body
+            console.log(bannerId, status)
+            const data = await this._adminService.blockUnblockBanner(bannerId, status);
+            if(data) {
+                return res.status(200).json({ message: `Banner ${status ? 'blocked' : 'unblocked'} successfully`, data })
+            } else {
+                return res.status(500).json({message: 'Internal server error'})
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchBanner(req: Request, res: Response, next: NextFunction) {
+        try {
+            const bannerData = await this._adminService.fetchBanner();
+            if(bannerData) {
+                return res.status(200).json({message: 'fetched banner successfully',data: bannerData})
+            } else {
+                return res.status(400).json({message: 'fetching banner unsuccessfull'})
 
             }
         } catch (error) {

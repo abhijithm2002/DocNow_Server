@@ -20,5 +20,15 @@ router.post('/refresh-token', refreshAccessToken)
 router.patch('/edit-profile',protect, PatientController.editPatient.bind(PatientController))
 router.get('/fetchDoctorDetails', protect, PatientController.fetchDoctorDetails.bind(PatientController))
 router.get('/fetchSlots', PatientController.fetchSlots.bind(PatientController))
+router.post('/create-payment', protect, PatientController.createPayment.bind(PatientController));
+router.post('/verify-payment', protect, PatientController.verifyPayment.bind(PatientController));
+router.post('/confirmBooking', protect, PatientController.postBooking.bind(PatientController));
+router.get('/fetchBookings', protect, PatientController.fetchBookings.bind(PatientController));
+router.get('/myBookings', protect, PatientController.myBookings.bind(PatientController));
+router.patch('/cancelBooking/:bookingId', protect, PatientController.cancelBooking.bind(PatientController))
+router.get('/walletHistory/:patientId', protect, PatientController.getWalletHistory.bind(PatientController))
+router.get('/getBanner', PatientController.getBanner.bind(PatientController))
+
+
 
 export const patientRoutes = router;

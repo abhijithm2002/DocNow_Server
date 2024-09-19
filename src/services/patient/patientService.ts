@@ -3,6 +3,8 @@ import { IpatientService } from "./interfaces/IpatientService";
 import PatientRepository from "../../repositories/patientRepository";
 import { Doctor } from "../../models/doctorModel";
 import doctorRepository from "../../repositories/doctorRepository";
+import { IBooking } from "../../models/bookingModel";
+import { IBanner } from "../../models/bannerModel";
 
 
 
@@ -50,6 +52,59 @@ export default class patientService implements IpatientService {
         console.log('entered fetchDoctor details')
         try {
             return await this._doctorRespository.fetchDoctor(id)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async postBooking(userData: Partial<IBooking>): Promise<IBooking | null> {
+        console.log("entered postbooking service")
+        try {
+            return await this._patientRepository.postBooking(userData)
+            
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchBookings(id: string, date: string): Promise<IBooking[] | null> {
+        console.log('entered fetch slots service')
+        try {
+            return await this._patientRepository.fetchBookings(id, date);
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async myBookings(patientId: string): Promise<IBooking[] | null> {
+        console.log('entered my booking service')
+        try {
+            return await this._patientRepository.myBookings(patientId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async cancelBooking(bookingId: string): Promise<IBooking | null> {
+        try {
+            return await this._patientRepository.cancelBooking(bookingId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getWalletHistory(patientId: string): Promise<Patient | null> {
+        try {
+            return await this._patientRepository.getWalletHistory(patientId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getBanner(): Promise<IBanner[] | null> {
+        try {
+            return await this._patientRepository.getBanner();
+
         } catch (error) {
             throw error
         }

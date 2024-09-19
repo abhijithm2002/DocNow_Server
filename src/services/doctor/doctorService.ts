@@ -2,6 +2,7 @@ import { Doctor } from "../../models/doctorModel";
 import { IdoctorService } from "./interfaces/IdoctorService";
 import doctorRepository from "../../repositories/doctorRepository";
 import Slots, { ISlot } from "../../models/slotModel";
+import { IBooking } from "../../models/bookingModel";
 
 export default class doctorService implements IdoctorService {
     private _doctorRepository: doctorRepository;
@@ -169,6 +170,25 @@ export default class doctorService implements IdoctorService {
         } catch (error) {
             throw error
         }
+    }
+
+    async fetchAppointments(doctorId: string): Promise<IBooking[] | null> {
+        console.log('fetch appointment service')
+        try {
+            return await this._doctorRepository.fetchAppointments(doctorId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getWalletHistory(doctorId: string): Promise<Doctor | null> {
+        console.log('fetch wallt history service')
+        try {
+            return await this._doctorRepository.getWalletHistory(doctorId)
+        } catch (error) {
+            throw error
+        }
+
     }
 
 

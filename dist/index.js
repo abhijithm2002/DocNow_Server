@@ -39,7 +39,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const patientRoute_1 = require("./routes/patientRoute");
 const doctorRoute_1 = require("./routes/doctorRoute");
-const adminRoute_1 = require("./routes/adminRoute"); // Ensure this is imported correctly
+const adminRoute_1 = require("./routes/adminRoute");
 const db_1 = __importDefault(require("./utils/db"));
 const errorHandlingMiddleware_1 = __importDefault(require("./middleware/errorHandlingMiddleware"));
 dotenv_1.default.config();
@@ -57,7 +57,7 @@ app.use(body_parser_1.default.json());
 const PORT = process.env.PORT || 5000;
 app.use('/api/patient', patientRoute_1.patientRoutes);
 app.use('/api/doctor', doctorRoute_1.doctorRoutes);
-app.use('/api/admin', adminRoute_1.adminRoutes); // Ensure this is used correctly
+app.use('/api/admin', adminRoute_1.adminRoutes);
 app.use(errorHandlingMiddleware_1.default);
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

@@ -186,10 +186,8 @@ class VerificationController {
             try {
                 let data = yield this._verificationService.patientLogin(email);
                 if (!data) {
-                    // Generate a random password
                     const randomPassword = crypto_1.default.randomBytes(8).toString('hex');
                     const hashedPassword = yield bcrypt_1.default.hash(randomPassword, 10);
-                    // Create new user
                     const newUser = {
                         email,
                         name,

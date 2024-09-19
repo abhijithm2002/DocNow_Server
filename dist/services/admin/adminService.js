@@ -14,10 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const patientRepository_1 = __importDefault(require("../../repositories/patientRepository"));
 const doctorRepository_1 = __importDefault(require("../../repositories/doctorRepository"));
+const adminRepository_1 = __importDefault(require("../../repositories/adminRepository"));
 class adminService {
     constructor() {
         this._patientsRepository = new patientRepository_1.default;
         this._doctorRepository = new doctorRepository_1.default;
+        this._adminRepository = new adminRepository_1.default;
     }
     fetchUserList() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -97,6 +99,44 @@ class adminService {
                     console.log('doctor data is not found');
                     return null;
                 }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    createBanner(bannerData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._adminRepository.createBanner(bannerData);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    blockUnblockBanner(id, status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const bannerData = yield this._adminRepository.fetchBanner(id);
+                if (bannerData) {
+                    bannerData.status = status;
+                    yield bannerData.save();
+                    return bannerData;
+                }
+                else {
+                    return null;
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchBanner() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._adminRepository.fetchBanners();
             }
             catch (error) {
                 throw error;

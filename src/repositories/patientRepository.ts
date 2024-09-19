@@ -1,5 +1,9 @@
+import Booking, { IBooking } from "../models/bookingModel";
 import Patients, { Patient } from "../models/userModel";
+import Doctors, { Doctor } from "../models/doctorModel";
+import mongoose from "mongoose";
 import { IpatientRepository } from "./interfaces/IpatientRepository";
+import Banner, { IBanner } from "../models/bannerModel";
 
 export default class PatientRepository implements IpatientRepository {
     async signupPatient(userData: Partial<Patient>): Promise<Patient | null> {
@@ -51,4 +55,150 @@ export default class PatientRepository implements IpatientRepository {
             throw error
         }
     }
+
+
+    async postBooking(userData: Partial<IBooking>): Promise<IBooking | null> {
+        console.log('entered postBooking respository');
+        
+        try {
+            console.log('doctorId:', userData.doctorId);
+            
+            const doctor = await Doctors.findById(userData.doctorId);
+            console.log("Doctor found:", doctor);
+        
+            if (!doctor) throw new Error(`Doctor not found with ID: ${userData.doctorId}`);
+            
+            const patient = await Patients.findById(userData.patientId);
+            if (!patient) throw new Error("Patient not found.");
+            if (userData.fee === undefined) throw new Error("Booking fee not defined.");
+        
+            doctor.Wallet = doctor.Wallet || 0;
+            patient.Wallet = patient.Wallet || 0;
+        
+            doctor.WalletHistory = doctor.WalletHistory || [];
+            patient.WalletHistory = patient.WalletHistory || [];
+        
+            doctor.Wallet += userData.fee;
+            doctor.WalletHistory.push({
+                date: new Date(),
+                amount: userData.fee,
+                message: `Booking fee received from ${patient.name}`,
+            });
+        
+            const fee = userData.fee;
+            if (patient.Wallet >= fee) {
+                patient.Wallet -= fee;
+                patient.WalletHistory.push({
+                    date: new Date(),
+                    amount: -fee,
+                    message: "Booking fee deducted",
+                });
+            } else {
+                patient.WalletHistory.push({
+                    date: new Date(),
+                    amount: -patient.Wallet,
+                    message: "Booking fee deducted",
+                });
+                patient.Wallet = 0;
+            }
+        
+            await doctor.save();
+            await patient.save();
+        
+            return await Booking.create(userData);
+        } catch (err) {
+            console.error("Error in postbookings:", err);
+            throw err;
+        }
+        
+    }
+    
+
+    async fetchBookings(id: string, date: string): Promise<IBooking[] | null> {
+        console.log('entered fetchBooking repo')
+        try {
+            return await Booking.find({ doctorId: id, date: date }).exec();
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async myBookings(patientId: string): Promise<IBooking[] | null> {
+        console.log('entered my bookings repo')
+        try {
+            return Booking.find({patientId: patientId})
+            .populate({path: 'doctorId', populate: {
+                path: 'expertise'}
+                ,})
+                .sort({updatedAt: -1})
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async cancelBooking(bookingId: string): Promise<IBooking | null> {
+        console.log('entered cancel booking repo');
+        try {
+            const booking = await Booking.findOne({_id: bookingId})
+            if(!booking) {
+                throw new Error('booking not found')
+            }
+            const fee = booking.fee;
+            const doctor = await Doctors.findById(booking.doctorId)
+            const patient = await Patients.findById(booking.patientId)
+
+            if(doctor && fee !== undefined) {
+                doctor.Wallet = doctor.Wallet || 0;
+                doctor.Wallet -= fee;
+                doctor.WalletHistory?.push({
+                    date: new Date(),
+                    amount: fee,
+                    message: `Booking cancelled of patient ${patient!.name}`
+                })
+                await doctor.save();
+            } 
+
+            if(patient && fee !== undefined) {
+                patient.Wallet = patient.Wallet || 0;
+                patient.Wallet += fee;
+                patient.WalletHistory.push({
+                    date: new Date(),
+                    amount: fee,
+                    message: `Refund for booking cancelled from ${doctor!.name}`
+                })
+                await patient.save();
+            }
+
+            booking.status = 'Canceled'
+            await booking.save()
+            console.log(booking)
+            return booking
+
+        } catch (error) {
+            throw error
+        }
+        
+    }
+
+    async getWalletHistory(patientId: string): Promise<Patient | null> {
+        console.log('enterd repo wallet ');
+        try {
+            const walletData = await Patients.findById(patientId).select('Wallet WalletHistory').sort({"WalletHistory.date": -1})
+            return walletData
+        } catch (error) {
+            throw error
+        }
+        
+    }
+
+    async getBanner(): Promise<IBanner[] | null> {
+        try {
+            const bannerData = await Banner.find({status: true}).sort({createdAt: -1})
+            return bannerData
+        } catch (error) {
+            throw error
+        }
+    }
+
 }

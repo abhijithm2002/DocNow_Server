@@ -11,4 +11,7 @@ router.patch('/patient/:userId/blockUnblock', AdminController.blockUnblockPatien
 router.patch('/doctor/:userId/blockUnblock', AdminController.blockUnblockDoctor.bind(AdminController))
 router.get('/fetchDoctorList', AdminController.fetchDoctorList.bind(AdminController))
 router.patch('/doctor/:doctorId/verify', AdminController.verifyDocuments.bind(AdminController))
+router.post('/createBanner',AdminController.createBanner.bind(AdminController))
+router.patch('/banner/:bannerId/blockUnblockBanner', AdminController.blockUnblockBanner.bind(AdminController))
+router.get('/fetchBanner', AdminController.fetchBanner.bind(AdminController))
 export const adminRoutes = router;

@@ -22,6 +22,8 @@ router.post('/updateSlots', protectdoctor, DoctorController.updateSlots.bind(Doc
 router.get('/fetchSlots', protectdoctor, DoctorController.fetchSlots.bind(DoctorController))
 router.patch('/deleteSlots', protectdoctor, DoctorController.deleteSlots.bind(DoctorController))
 router.get('/getDocuments',protectdoctor,DoctorController.fetchDocuments.bind(DoctorController))
+router.get('/fetchAppointments/:doctorId',protectdoctor,DoctorController.fetchAppointments.bind(DoctorController))
+router.get('/wallet-history/:doctorId', protectdoctor,DoctorController.getWalletHistory.bind(DoctorController))
 
 
 router.post('/refresh-token', refreshAccessTokenDoctor)

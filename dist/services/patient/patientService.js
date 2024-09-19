@@ -66,5 +66,68 @@ class patientService {
             }
         });
     }
+    postBooking(userData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("entered postbooking service");
+            try {
+                return yield this._patientRepository.postBooking(userData);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchBookings(id, date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered fetch slots service');
+            try {
+                return yield this._patientRepository.fetchBookings(id, date);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    myBookings(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered my booking service');
+            try {
+                return yield this._patientRepository.myBookings(patientId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    cancelBooking(bookingId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.cancelBooking(bookingId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getWalletHistory(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.getWalletHistory(patientId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getBanner() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.getBanner();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.default = patientService;

@@ -5,5 +5,13 @@ export interface IpatientController{
     editPatient(req: Request, res: Response, next: NextFunction): void
     fetchDoctorDetails(req: Request, res: Response, next: NextFunction): void
     fetchSlots(req: Request, res: Response, next: NextFunction): void;
+    createPayment(req: Request, res: Response, next: NextFunction): void;
+    verifyPayment(req: Request, res: Response, next: NextFunction): void;
+    postBooking(req: Request, res: Response, next: NextFunction): void;
+    fetchBookings(req: Request, res: Response, next: NextFunction): void;
+    myBookings(req: Request, res: Response, next: NextFunction): void;
+    cancelBooking(req: Request, res: Response, next: NextFunction): void;
+    getWalletHistory(req: Request, res: Response, next: NextFunction): void;
+    getBanner(req: Request, res: Response, next: NextFunction): void;
     
 }

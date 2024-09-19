@@ -46,5 +46,7 @@ router.post('/updateSlots', authDoctor_1.default, DoctorController.updateSlots.b
 router.get('/fetchSlots', authDoctor_1.default, DoctorController.fetchSlots.bind(DoctorController));
 router.patch('/deleteSlots', authDoctor_1.default, DoctorController.deleteSlots.bind(DoctorController));
 router.get('/getDocuments', authDoctor_1.default, DoctorController.fetchDocuments.bind(DoctorController));
+router.get('/fetchAppointments/:doctorId', authDoctor_1.default, DoctorController.fetchAppointments.bind(DoctorController));
+router.get('/wallet-history/:doctorId', authDoctor_1.default, DoctorController.getWalletHistory.bind(DoctorController));
 router.post('/refresh-token', authDoctor_1.refreshAccessTokenDoctor);
 exports.doctorRoutes = router;

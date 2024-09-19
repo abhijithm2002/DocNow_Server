@@ -190,11 +190,11 @@ export default class VerificationController implements IverificationController {
         try {
             let data = await this._verificationService.patientLogin(email);
             if (!data) {
-                // Generate a random password
+              
                 const randomPassword = crypto.randomBytes(8).toString('hex');
                 const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
-                // Create new user
+                
                 const newUser = {
                     email,
                     name,

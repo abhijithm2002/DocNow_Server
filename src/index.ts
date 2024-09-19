@@ -45,7 +45,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { patientRoutes } from './routes/patientRoute';
 import { doctorRoutes } from './routes/doctorRoute';
-import { adminRoutes } from './routes/adminRoute'; // Ensure this is imported correctly
+import { adminRoutes } from './routes/adminRoute';
 import connectDB from './utils/db';
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware';
 
@@ -69,7 +69,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use('/api/patient', patientRoutes);
 app.use('/api/doctor', doctorRoutes);
-app.use('/api/admin', adminRoutes); // Ensure this is used correctly
+app.use('/api/admin', adminRoutes);
 
 app.use(errorHandlingMiddleware);
 

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const slotModel_1 = __importDefault(require("../models/slotModel"));
+const bookingModel_1 = __importDefault(require("../models/bookingModel"));
 class doctorRepository {
     signupDoctor(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,8 +68,7 @@ class doctorRepository {
             try {
                 console.log('Inserting or Updating Slots Data:', slotsData);
                 const promises = slotsData.map(slot => {
-                    return slotModel_1.default.findOneAndUpdate({ doctorId: slot.doctorId, date: slot.date }, { shifts: slot.shifts, createdAt: slot.createdAt }, { upsert: true, new: true } // upsert: true to insert if not found, new: true to return the updated document
-                    );
+                    return slotModel_1.default.findOneAndUpdate({ doctorId: slot.doctorId, date: slot.date }, { shifts: slot.shifts, createdAt: slot.createdAt }, { upsert: true, new: true });
                 });
                 const result = yield Promise.all(promises);
                 console.log('Inserted or Updated Slots:', result);
@@ -132,6 +132,32 @@ class doctorRepository {
             }
             catch (error) {
                 return null;
+            }
+        });
+    }
+    fetchAppointments(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered fetchAppointments repo');
+            try {
+                const AppointmentData = yield bookingModel_1.default.find({ doctorId }).populate('patientId', 'name').sort({ date: -1 });
+                console.log('fetched  appointment data', AppointmentData);
+                return AppointmentData;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getWalletHistory(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered wallet history repo');
+            try {
+                const walletData = yield doctorModel_1.default.findById(doctorId).select('WalletHistory Wallet').sort({ date: -1 });
+                console.log(walletData);
+                return walletData;
+            }
+            catch (error) {
+                throw error;
             }
         });
     }

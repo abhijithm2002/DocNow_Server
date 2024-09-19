@@ -73,7 +73,6 @@ class adminController {
     }
     fetchDoctorList(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered doctorlist admin controller');
             try {
                 const doctorData = yield this._adminService.fetchDoctorList();
                 return res.status(200).json({ doctorData });
@@ -94,6 +93,62 @@ class adminController {
                 }
                 else {
                     return res.status(400).json({ message: 'documents verification unsuccessfull' });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    createBanner(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('banner controller');
+            try {
+                const { title, title2, title3, description, imgUrl } = req.body;
+                console.log(req.body);
+                const bannerData = { title, title2, title3, description, imgUrl };
+                const data = yield this._adminService.createBanner(bannerData);
+                if (data) {
+                    return res.status(200).json({ message: 'banner created successfully' });
+                }
+                else {
+                    return res.status(400).json({ message: 'banner creation Unsucessfull' });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    blockUnblockBanner(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('controller');
+            try {
+                const { bannerId } = req.params;
+                const { status } = req.body;
+                console.log(bannerId, status);
+                const data = yield this._adminService.blockUnblockBanner(bannerId, status);
+                if (data) {
+                    return res.status(200).json({ message: `Banner ${status ? 'blocked' : 'unblocked'} successfully`, data });
+                }
+                else {
+                    return res.status(500).json({ message: 'Internal server error' });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchBanner(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const bannerData = yield this._adminService.fetchBanner();
+                if (bannerData) {
+                    return res.status(200).json({ message: 'fetched banner successfully', data: bannerData });
+                }
+                else {
+                    return res.status(400).json({ message: 'fetching banner unsuccessfull' });
                 }
             }
             catch (error) {

@@ -22,6 +22,12 @@ export interface Address {
     country : string;
 }
 
+export interface WalletTransaction {
+    date: Date;
+    amount: number;
+    message: string;
+}
+
 export interface Patient extends Document {
     name?: string,
     email?: string,
@@ -39,6 +45,8 @@ export interface Patient extends Document {
     notifications ?: Notification[];
     address ?: Address;
     role: String;
+    Wallet: number;
+    WalletHistory: WalletTransaction[]
 
 }
 
@@ -71,8 +79,24 @@ const userSchema = new Schema<Patient> ({
         pincode: {type: Number},
         state: {type: String},
         country: {type: String}
-    }
-    
+    },
+    Wallet : { type: Number, default: 0},
+    WalletHistory: [
+        {
+            date: {
+                type : Date,
+                default: Date.now
+            },
+            amount : {
+                type: Number,
+                default: 0
+            },
+            message : {
+                type: String,
+                default: 'Initial Entry'
+            }
+        }
+    ],
 
 
 },{timestamps : true})

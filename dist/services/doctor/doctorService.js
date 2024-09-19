@@ -178,5 +178,27 @@ class doctorService {
             }
         });
     }
+    fetchAppointments(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('fetch appointment service');
+            try {
+                return yield this._doctorRepository.fetchAppointments(doctorId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getWalletHistory(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('fetch wallt history service');
+            try {
+                return yield this._doctorRepository.getWalletHistory(doctorId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.default = doctorService;

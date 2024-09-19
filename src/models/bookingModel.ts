@@ -1,5 +1,5 @@
-import mongoose,{Document, Schema} from "mongoose";
-import {ISlot} from './slotModel'
+import mongoose, { Document, Schema } from "mongoose";
+import { ISlot } from './slotModel'
 
 export interface BookingAndSlots {
     List: IBooking[];
@@ -12,12 +12,9 @@ export interface IBooking extends Document {
     date: Date;
     shift: string;
     status: string;
-    payment: {
-        chargeId: string | null;
-        paymentId: string | null;
-        amount: number | null;
-        status: string;
-    }
+    payment: string;
+    fee: number;
+    prescription: string[]
 }
 
 const bookingSchema: Schema = new Schema({
@@ -28,7 +25,7 @@ const bookingSchema: Schema = new Schema({
     },
     patientId: {
         type: Schema.Types.ObjectId,
-        ref: 'Patient',
+        ref: 'Patients',
         required: true
     },
     date: {
@@ -40,28 +37,24 @@ const bookingSchema: Schema = new Schema({
         required: true
     },
     status: {
-        type : String,
+        type: String,
         default: 'Active'
     },
     payment: {
-        chargeId: {
-            type: String,
-            default: null
-        },
-        paymentId: {
-            type: String,
-            default: null
-        },
-        amount : {
-            type: Number,
-            default: null
-        },
-        status: {
-            type: String,
-            default: 'Paid'
-        }
+        type: String,
+        default: 'Paid'
+    },
+    fee: {
+        type: Number,
+        required: true
+    },
+    prescription: {
+        type: [String],
+        default: []
     }
-},{ timestamps: true})
 
-const Booking = mongoose.model<IBooking>("Booking",bookingSchema);
+
+}, { timestamps: true })
+
+const Booking = mongoose.model<IBooking>("Booking", bookingSchema);
 export default Booking;

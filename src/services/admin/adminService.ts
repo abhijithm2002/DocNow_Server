@@ -3,16 +3,20 @@ import { Doctor } from "../../models/doctorModel";
 import { IadminService } from "./interface/IadminService";
 import PatientRepository from "../../repositories/patientRepository";
 import doctorRepository from "../../repositories/doctorRepository";
+import { IBanner } from "../../models/bannerModel";
+import adminRepository from "../../repositories/adminRepository";
 
 
 export default class adminService implements IadminService {
    
     private _patientsRepository: PatientRepository
     private _doctorRepository: doctorRepository
+    private _adminRepository: adminRepository
     constructor() {
        
         this._patientsRepository = new PatientRepository
         this._doctorRepository = new doctorRepository
+        this._adminRepository = new adminRepository
     }
     async fetchUserList(): Promise<Patient[] | null> {
         try {
@@ -80,6 +84,38 @@ export default class adminService implements IadminService {
                 console.log('doctor data is not found')
                 return null
             }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createBanner(bannerData: Partial<IBanner>): Promise<IBanner | null> {
+        try {
+            return await this._adminRepository.createBanner(bannerData)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async blockUnblockBanner(id: string, status: boolean): Promise<IBanner | null> {
+        try {
+            const bannerData =  await this._adminRepository.fetchBanner(id);
+            if(bannerData) {
+                bannerData.status = status;
+                await bannerData.save();
+                return bannerData
+            } else {
+                return null
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchBanner(): Promise<IBanner[] | null> {
+        try {
+            return await this._adminRepository.fetchBanners();
+
         } catch (error) {
             throw error
         }

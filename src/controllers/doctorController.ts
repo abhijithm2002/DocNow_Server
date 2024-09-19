@@ -104,6 +104,7 @@ export default class doctorController implements IdoctorController {
         console.log('entered update slots controller');
         try {
             const slotsArray = req.body; 
+            console.log('//////////////////////////////////')
             console.log('body data', req.body);
     
             const updatedSlots = await Promise.all(slotsArray.map(async (slotData: any) => {
@@ -163,6 +164,43 @@ export default class doctorController implements IdoctorController {
             console.log('error in delete slots', error);
             res.status(500).json({ message: 'Internal server error' });
         }
+    }
+
+    async fetchAppointments(req: Request, res: Response, next: NextFunction) {
+        console.log('entered fetchAppointments controller');
+        try {
+            const doctorId = req.params.doctorId;
+            console.log(doctorId)
+            const AppointmentData = await this._doctorService.fetchAppointments(doctorId);
+            if(AppointmentData) {
+                return res.status(200).json({message: 'fetched Appointments successfully', data: AppointmentData})
+            } else {
+                return res.status(400).json({message: 'fetching Appointments unsuccessfull'})
+
+            }
+        } catch (error) {
+            console.log('error in fetching Appointments', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+        
+    }
+
+    async getWalletHistory(req: Request, res: Response, next: NextFunction) {
+        console.log('entered wallet history controller');
+        try {
+            const doctorId = req.params.doctorId;
+            console.log(doctorId)
+            const data = await this._doctorService.getWalletHistory(doctorId);
+            if(data) {
+                return res.status(200).json({message: 'fetched wallet history successfully', data})
+            } else {
+                return res.status(400).json({message: 'fetching wallet history unsuccessfull'})
+            }
+        } catch (error) {
+            console.log('error in fetching wallet history', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+        
     }
     
 }
