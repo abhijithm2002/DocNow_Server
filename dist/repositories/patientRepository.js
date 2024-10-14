@@ -80,6 +80,7 @@ class PatientRepository {
             console.log('entered postBooking respository');
             try {
                 console.log('doctorId:', userData.doctorId);
+                const isAvailable = yield bookingModel_1.default.find();
                 const doctor = yield doctorModel_1.default.findById(userData.doctorId);
                 console.log("Doctor found:", doctor);
                 if (!doctor)

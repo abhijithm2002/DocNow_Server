@@ -22,7 +22,7 @@ export default class adminController implements IadminController {
             throw error
         }
     }
-
+    
     async blockUnblockPatient(req: Request, res: Response, next: NextFunction) {
         try {
             const {status} = req.body

@@ -30,6 +30,7 @@
     "nodemon": "^3.1.4",
     "otp-generator": "^4.0.1",
     "razorpay": "^2.9.4",
+    "socket.io": "^4.8.0",
     "sweetalert2": "^11.12.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"

@@ -48,6 +48,7 @@ import { doctorRoutes } from './routes/doctorRoute';
 import { adminRoutes } from './routes/adminRoute';
 import connectDB from './utils/db';
 import errorHandlingMiddleware from './middleware/errorHandlingMiddleware';
+import { messageRoutes } from './routes/messageRoute';
 
 dotenv.config();
 connectDB();
@@ -70,6 +71,7 @@ const PORT = process.env.PORT || 5000;
 app.use('/api/patient', patientRoutes);
 app.use('/api/doctor', doctorRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/message', messageRoutes);
 
 app.use(errorHandlingMiddleware);
 

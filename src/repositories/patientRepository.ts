@@ -62,7 +62,7 @@ export default class PatientRepository implements IpatientRepository {
         
         try {
             console.log('doctorId:', userData.doctorId);
-            
+            const isAvailable = await Booking.find()
             const doctor = await Doctors.findById(userData.doctorId);
             console.log("Doctor found:", doctor);
         

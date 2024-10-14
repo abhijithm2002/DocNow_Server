@@ -42,6 +42,7 @@ const doctorRoute_1 = require("./routes/doctorRoute");
 const adminRoute_1 = require("./routes/adminRoute");
 const db_1 = __importDefault(require("./utils/db"));
 const errorHandlingMiddleware_1 = __importDefault(require("./middleware/errorHandlingMiddleware"));
+const messageRoute_1 = require("./routes/messageRoute");
 dotenv_1.default.config();
 (0, db_1.default)();
 const app = (0, express_1.default)();
@@ -58,6 +59,7 @@ const PORT = process.env.PORT || 5000;
 app.use('/api/patient', patientRoute_1.patientRoutes);
 app.use('/api/doctor', doctorRoute_1.doctorRoutes);
 app.use('/api/admin', adminRoute_1.adminRoutes);
+app.use('/api/message', messageRoute_1.messageRoutes);
 app.use(errorHandlingMiddleware_1.default);
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
