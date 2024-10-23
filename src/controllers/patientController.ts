@@ -251,4 +251,33 @@ export default class patientController implements IpatientController {
     }
   }
     
+  async addFavouriteDoctor(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {patientId, doctorId } = req.body;
+      console.log(patientId)
+      console.log(doctorId)
+      
+      const message = await this._patientService.addFavouriteDoctor(patientId, doctorId);
+      return res.status(200).json({ message });
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+
+  async getFavouriteDoctors(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { patientId } = req.params;
+      console.log('idddd',patientId)
+      const favouriteDoctors = await this._patientService.getFavouriteDoctors(patientId);
+
+      if (!favouriteDoctors) {
+          return res.status(404).json({ message: 'No favorite doctors found' });
+      }
+      console.log('favourite',favouriteDoctors)
+      return res.status(200).json(favouriteDoctors);
+  } catch (error) {
+      console.error('Error fetching favourite doctors:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+  }
+  }
 }

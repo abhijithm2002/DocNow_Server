@@ -13,5 +13,6 @@ export interface IpatientController{
     cancelBooking(req: Request, res: Response, next: NextFunction): void;
     getWalletHistory(req: Request, res: Response, next: NextFunction): void;
     getBanner(req: Request, res: Response, next: NextFunction): void;
-    
+    addFavouriteDoctor(req: Request, res: Response, next: NextFunction): void;  
+    getFavouriteDoctors(req: Request, res: Response, next: NextFunction): void;  
 }

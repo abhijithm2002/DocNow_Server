@@ -5,6 +5,7 @@ import { Doctor } from "../../models/doctorModel";
 import doctorRepository from "../../repositories/doctorRepository";
 import { IBooking } from "../../models/bookingModel";
 import { IBanner } from "../../models/bannerModel";
+import mongoose from "mongoose";
 
 
 
@@ -109,4 +110,22 @@ export default class patientService implements IpatientService {
             throw error
         }
     }
+
+    async addFavouriteDoctor(patientId: string, doctorId: string): Promise<string> {
+        try {
+          const message = await this._patientRepository.addFavouriteDoctor(patientId, doctorId);
+          return message;
+        } catch (error) {
+          throw error;
+        }
+      }
+
+    async getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null> {
+        try {
+            return await this._patientRepository.getFavouriteDoctors(patientId);
+        } catch (error) {
+            throw error
+        }
+    }
+      
 }

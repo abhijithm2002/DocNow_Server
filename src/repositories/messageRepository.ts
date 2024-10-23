@@ -5,6 +5,8 @@ import {Types, Document} from 'mongoose'
 import Patients, {  Patient } from "../models/userModel";
 import Doctors,{ Doctor } from "../models/doctorModel";
 import Booking from "../models/bookingModel";
+import { getReceiverSocketId } from "../Socket/socket";
+import {io} from '../index'
 
 export default class MessageRepository implements ImessageRepository {
     async sendMessage(id: string, senderId: string, message: string, messageType: string): Promise<IMessage | null> {
@@ -32,6 +34,15 @@ export default class MessageRepository implements ImessageRepository {
 
             conversation.messages.push(newMessage._id as Types.ObjectId)
             await Promise.all([conversation.save(), newMessage.save()]);
+            const receiverSocketId = getReceiverSocketId(newMessage.recieverId.toString())
+            io.to(receiverSocketId as string).emit("newMessage", {
+              recieverId: newMessage.recieverId,
+              senderId: newMessage.senderId,
+              unreadCount: 0,
+              message: newMessage.message,
+              createdAt: newMessage.createdAt
+              
+            });
             return newMessage
         } catch (error) {
             throw error
@@ -58,6 +69,8 @@ export default class MessageRepository implements ImessageRepository {
         }
       }
       async conversationPatients(id: string): Promise<Doctor[] | null> {
+        console.log('enterd patient conversation');
+        
         try {
           const bookings = await Booking.find({
             patientId: id,
@@ -66,6 +79,7 @@ export default class MessageRepository implements ImessageRepository {
           
           const doctorIds = bookings.map((booking) => booking.doctorId);
           const doctors = await Doctors.find({ _id: { $in: doctorIds } });
+          console.log('doctors', doctors)
           return doctors;
         } catch (error) {
           throw error;

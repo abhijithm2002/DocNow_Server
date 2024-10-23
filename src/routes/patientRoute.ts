@@ -28,6 +28,8 @@ router.get('/myBookings', protect, PatientController.myBookings.bind(PatientCont
 router.patch('/cancelBooking/:bookingId', protect, PatientController.cancelBooking.bind(PatientController))
 router.get('/walletHistory/:patientId', protect, PatientController.getWalletHistory.bind(PatientController))
 router.get('/getBanner', PatientController.getBanner.bind(PatientController))
+router.patch('/addToFavourites', PatientController.addFavouriteDoctor.bind(PatientController))
+router.get('/getFavouriteDoctors/:patientId', PatientController.getFavouriteDoctors.bind(PatientController))
 
 
 

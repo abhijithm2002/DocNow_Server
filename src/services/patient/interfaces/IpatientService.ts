@@ -2,6 +2,7 @@ import { Patient } from "../../../models/userModel";
 import { Doctor } from "../../../models/doctorModel";
 import { IBooking } from "../../../models/bookingModel";
 import { IBanner } from "../../../models/bannerModel";
+import mongoose from "mongoose";
 
 export interface IpatientService {
     signupPatient(userData: Partial<Patient>): Promise < Patient | null>
@@ -13,4 +14,6 @@ export interface IpatientService {
     cancelBooking(bookingId: string): Promise<IBooking | null>
     getWalletHistory(patientId: string): Promise<Patient | null>
     getBanner(): Promise<IBanner[] | null>
+    addFavouriteDoctor(patientId: string, doctorId: string): Promise<string>
+    getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null>;
 }

@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { IpatientRepository } from "./interfaces/IpatientRepository";
 import Banner, { IBanner } from "../models/bannerModel";
 
+
 export default class PatientRepository implements IpatientRepository {
     async signupPatient(userData: Partial<Patient>): Promise<Patient | null> {
         try {
@@ -201,4 +202,41 @@ export default class PatientRepository implements IpatientRepository {
         }
     }
 
+    async addFavouriteDoctor(patientId: string, doctorId: string): Promise<string> {
+        try {
+            const patient = await Patients.findById(patientId);
+            if(!patient) {
+                throw new Error('patient not found')
+            }
+            patient.favourite_doctors = patient.favourite_doctors || [];
+            const doctorObjectId = new mongoose.Types.ObjectId(doctorId)
+            const isFavourite = patient.favourite_doctors?.some((doctor) => doctor.equals(doctorObjectId));
+            if(isFavourite) {
+                patient.favourite_doctors = patient.favourite_doctors.filter((favDoctorId) => !favDoctorId.equals(doctorObjectId))
+                await patient.save()
+                return 'doctor removed from favourites'
+            } else {
+                patient.favourite_doctors.push(doctorObjectId);
+                await patient.save();
+                return 'doctor added to favourites'
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null> {
+        try {
+            const patient = await Patients.findById(patientId).populate('favourite_doctors');
+            if (!patient) {
+                throw new Error('patient not found')
+            }
+    
+            return patient.favourite_doctors || null;
+        } catch (error) {
+            console.error('Error in getFavouriteDoctors repository:', error); 
+            throw error;
+        }
+    }
+    
 }

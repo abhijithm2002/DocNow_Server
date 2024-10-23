@@ -1,10 +1,6 @@
 import mongoose ,{Document, model, Schema} from "mongoose";
 
-export interface Doctor {
-    id: string;
-    name: string;
-    specialization ?: string
-}
+
 
 export interface Appointment {
     id: string;
@@ -40,7 +36,7 @@ export interface Patient extends Document {
     is_admin?: boolean;
     is_blocked ?: boolean;
     is_verified ?: boolean;
-    favourite_doctors ?: Doctor[];
+    favourite_doctors?: mongoose.Types.ObjectId[];
     appointments ?: Appointment[];
     notifications ?: Notification[];
     address ?: Address;
@@ -62,11 +58,9 @@ const userSchema = new Schema<Patient> ({
     gender: {type: String },
     role: {type: String},
     is_verified : {type : Boolean, default : false},
-    favourite_doctors: [{
-        id: { type: String},
-        name: { type: String },
-        specialization: { type: String }
-    }],
+    favourite_doctors: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Doctors' }
+    ],
     appointments : [{
         id: {type: String}
     }],

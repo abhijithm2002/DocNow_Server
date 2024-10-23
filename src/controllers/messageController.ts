@@ -54,8 +54,9 @@ export default class messageController implements ImessageController {
             const { id, action } = req.query;
             console.log('id', id, action)
             let conversation;
-            if (action === "fetchDoctorsForUsers") {
+            if (action === "fetchDoctorForUsers") {
                 conversation = await this._messageService.conversationPatients(id as string)
+                console.log('conversaiton',conversation)
                 return res.json({ conversation });
             } else if (action === "fetchUsersForDoctors") {
                 conversation = await this._messageService.conversationDoctors(id as string);

@@ -1,131 +1,128 @@
-// import express from "express";
-// import http from "http";
-// import { Server, Socket } from "socket.io";
-// import dotenv from 'dotenv';
+import { Server, Socket } from "socket.io";
+import { Server as HttpServer } from "http";
+import dotenv from 'dotenv';
 
-// dotenv.config();
+dotenv.config();
 
-// // Define the shape of the socket user ID map
-// interface UserSocketMap {
-//   [userId: string]: string; // Maps userId to socketId
-// }
+interface UserSocketMap {
+  [userId: string]: string;
+}
 
-// // Define the shape of unread messages tracking
-// interface UnreadMessages {
-//   [to: string]: {
-//     [from: string]: number; // Maps from userId to unread message count
-//   };
-// }
+interface UnreadMessages {
+  [to: string]: {
+    [from: string]: number;
+  };
+}
 
-// const app = express();
-// const server = http.createServer(app);
-// const io = new Server(server, {
-//   cors: {
-//     origin: ['http://localhost:5173', 'http://localhost:3000'], 
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-//     credentials: true,
-//   },
-// });
+const userSocketMap: UserSocketMap = {};
+const unreadMessages: UnreadMessages = {};
 
+export const getReceiverSocketId = (receiverId: string): string | undefined => {
+  return userSocketMap[receiverId];
+};
 
-// // User socket mapping and unread messages tracking
-// const userSocketMap: UserSocketMap = {};
-// const unreadMessages: UnreadMessages = {};
+export const initializeSocket = (server: HttpServer) => {
+  const io = new Server(server, {
+    cors: {
+      origin: 'http://localhost:5173', 
+      methods: ["GET", "POST"],
+      credentials: true, // Allow sending cookies
+    },
+  });
 
-// // Function to get the receiver's socket ID
-// const getReceiverSocketId = (receiverId: string): string | undefined => {
-//   return userSocketMap[receiverId];
-// };
+  io.on("connection", (socket: Socket) => {
+    console.log('socket connected');
+    
+    const userId = socket.handshake.query.userId as string | undefined;
 
-// // Socket connection handling
-// io.on("connection", (socket: Socket) => {
-//   const userId = socket.handshake.query.userId as string;
+    if (userId && userId !== "undefined") {
+      userSocketMap[userId] = socket.id;
+    }
 
-//   if (userId) {
-//     userSocketMap[userId] = socket.id;
-//   }
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-//   // Emit online users
-//   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    socket.on("disconnect", () => {
+      if (userId) {
+        delete userSocketMap[userId];
+      }
+      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
 
-//   // Handle disconnect
-//   socket.on("disconnect", () => {
-//     if (userId) {
-//       delete userSocketMap[userId];
-//     }
-//     io.emit("getOnlineUsers", Object.keys(userSocketMap));
-//   });
+    // Typing status
+    socket.on("typing", () => {
+      const receiverId = getReceiverSocketId(userId!);
+      if (receiverId) {
+        io.to(receiverId).emit("typing", { userId });
+      }
+    });
 
-//   // Typing status
-//   socket.on("typing", () => {
-//     const receiverId = getReceiverSocketId(userId);
-//     if (receiverId) {
-//       io.to(receiverId).emit("typing", { userId });
-//     }
-//   });
+    socket.on("stopTyping", () => {
+      const receiverId = getReceiverSocketId(userId!);
+      if (receiverId) {
+        io.to(receiverId).emit("stopTyping", { userId });
+      }
+    });
 
-//   // Stop typing status
-//   socket.on("stopTyping", () => {
-//     const receiverId = getReceiverSocketId(userId);
-//     if (receiverId) {
-//       io.to(receiverId).emit("stopTyping", { userId });
-//     }
-//   });
+    // Handle new message
+    socket.on("sendnewMessage", ({ to, from,message }: { to: string; from: string , message: string}) => {
+      console.log('message socket',message)
+      console.log('to in socket', to)
+      if (!unreadMessages[to]) {
+        unreadMessages[to] = {};
+      }
+      if (!unreadMessages[to][from]) {
+        unreadMessages[to][from] = 0;
+      }
+      unreadMessages[to][from] += 1;
 
-//   // Handle new message
-//   socket.on("sendnewMessage", ({ to, from }: { to: string; from: string }) => {
-//     if (!unreadMessages[to]) {
-//       unreadMessages[to] = {};
-//     }
-//     if (!unreadMessages[to][from]) {
-//       unreadMessages[to][from] = 0;
-//     }
-//     unreadMessages[to][from] += 1;
+      const receiverSocketId = getReceiverSocketId(to);
+      // // if (receiverSocketId) {
+      // //   io.to(receiverSocketId).emit("newMessage", {
+      // //     recieverId: to,
+      // //     senderId: from,
+      // //     unreadCount: unreadMessages[to][from],
+      // //     message,
+          
+      // //   });
+      // }
+    });
 
-//     const receiverSocketId = getReceiverSocketId(to);
-//     if (receiverSocketId) {
-//       io.to(receiverSocketId).emit("newunreadMessage", {
-//         from,
-//         unreadCount: unreadMessages[to][from],
-//       });
-//     }
-//   });
+    // Mark messages as read
+    socket.on("markAsRead", ({ from, to }: { from: string; to: string }) => {
+      if (unreadMessages[to] && unreadMessages[to][from]) {
+        delete unreadMessages[to][from];
+      }
+    });
 
-//   // Mark messages as read
-//   socket.on("markAsRead", ({ from, to }: { from: string; to: string }) => {
-//     if (unreadMessages[to] && unreadMessages[to][from]) {
-//       delete unreadMessages[to][from];
-//     }
-//   });
+    // socket.on(
+    //   "callingUser",
+    //   ({
+    //     Caller,
+    //     userId,
+    //     personalLink,
+    //   }: {
+    //     Caller: any;
+    //     userId: string;
+    //     personalLink: string;
+    //   }) => {
+    //     const receiverSocketId = getReceiverSocketId(userId);
+    //     if (receiverSocketId) {
+    //       io.to(receiverSocketId).emit("incomingCall", {
+    //         Caller,
+    //         userId,
+    //         personalLink,
+    //       });
+    //     }
+    //   }
+    // );
 
-//   // Handle calling user
-//   socket.on("callingUser", ({
-//     Caller,
-//     userId,
-//     personalLink,
-//   }: {
-//     Caller: any;
-//     userId: string;
-//     personalLink: string;
-//   }) => {
-//     const receiverSocketId = getReceiverSocketId(userId);
-//     if (receiverSocketId) {
-//       io.to(receiverSocketId).emit("incomingCall", {
-//         Caller,
-//         userId,
-//         personalLink,
-//       });
-//     }
-//   });
+    // socket.on("onRejected", ({ Caller }: { Caller: any }) => {
+    //   const receiverSocketId = getReceiverSocketId(Caller._id);
+    //   if (receiverSocketId) {
+    //     io.to(receiverSocketId).emit("callRejected");
+    //   }
+    // });
+  });
 
-//   // Handle call rejection
-//   socket.on("onRejected", ({ Caller }: { Caller: any }) => {
-//     const receiverSocketId = getReceiverSocketId(Caller._id);
-//     if (receiverSocketId) {
-//       io.to(receiverSocketId).emit("callRejected");
-//     }
-//   });
-// });
-
-// // Export the IO instance and server
-// export { io, server };
+  return io;
+};
