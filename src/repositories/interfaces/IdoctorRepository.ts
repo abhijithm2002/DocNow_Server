@@ -13,4 +13,5 @@ export interface IdoctorRepository {
     fetchDocuments(email: string): Promise<Doctor | null>;
     fetchAppointments(doctorId: string): Promise<IBooking[] | null >
     getWalletHistory(doctorId: string): Promise<Doctor | null >
+    updateBooking(bookingId: string): Promise<IBooking | null>
 }

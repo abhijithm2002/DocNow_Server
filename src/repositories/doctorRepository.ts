@@ -144,5 +144,14 @@ export default class doctorRepository implements IdoctorRepository {
         }
     }
 
+    async updateBooking(bookingId: string): Promise<IBooking | null> {
+        try {
+            return await Booking.findById(bookingId).exec()
+
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
 

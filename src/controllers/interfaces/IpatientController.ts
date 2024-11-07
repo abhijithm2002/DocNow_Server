@@ -15,4 +15,5 @@ export interface IpatientController{
     getBanner(req: Request, res: Response, next: NextFunction): void;
     addFavouriteDoctor(req: Request, res: Response, next: NextFunction): void;  
     getFavouriteDoctors(req: Request, res: Response, next: NextFunction): void;  
+    fetchDoctorList(req: Request, res: Response, next: NextFunction): void;  
 }

@@ -55,7 +55,7 @@ export default class doctorService implements IdoctorService {
 
             if (doctor) {
                 doctor.documents = doctorData.documents || [];
-                
+
                 doctor.documents_verified = false;
                 await doctor.save();
                 return doctor;
@@ -84,39 +84,39 @@ export default class doctorService implements IdoctorService {
         try {
             const { doctorId, startDate, endDate, startTime, endTime, duration, breakTime } = slotsData;
             console.log('slotsData', slotsData);
-    
+
             const start = new Date(startDate);
             const end = new Date(endDate);
             let currentDate = new Date(start);
             let allSlots: ISlot[] = [];
-    
+
             const startTimeDate = new Date(startTime);
             const endTimeDate = new Date(endTime);
-    
+
             while (currentDate <= end) {
                 const daySlots: string[] = [];
                 let shiftStart = new Date(currentDate);
                 shiftStart.setHours(startTimeDate.getHours(), startTimeDate.getMinutes(), 0, 0);
                 const shiftEnd = new Date(currentDate);
                 shiftEnd.setHours(endTimeDate.getHours(), endTimeDate.getMinutes(), 0, 0);
-    
+
                 while (shiftStart < shiftEnd) {
                     let shiftEndTime = new Date(shiftStart.getTime() + duration * 60000);
                     if (shiftEndTime > shiftEnd) break;
-    
+
                     const shiftStartFormatted = shiftStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                     const shiftEndFormatted = shiftEndTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-    
+
                     daySlots.push(`${shiftStartFormatted} - ${shiftEndFormatted}`);
                     shiftStart = new Date(shiftEndTime.getTime() + breakTime * 60000);
                 }
-    
+
                 // Check if slot exists for the current date
                 let slot = await Slots.findOne({
                     doctorId,
                     date: new Date(currentDate)
                 });
-    
+
                 if (slot) {
                     // Update existing slot
                     slot.shifts = daySlots;
@@ -132,27 +132,27 @@ export default class doctorService implements IdoctorService {
                     });
                     allSlots.push(slot);
                 }
-    
+
                 currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
             }
-    
+
             // Save new slots
             if (allSlots.length > 0) {
                 const savedSlots = await this._doctorRepository.insertSlots(allSlots);
                 console.log('saved slots ////', savedSlots);
                 return savedSlots;
             }
-    
+
             return allSlots; // Return the updated slots
-    
+
         } catch (error) {
             console.error('Error in updateSlots service:', error);
             throw error;
         }
     }
-    
-    
-    
+
+
+
     async fetchSlots(id: string, date: string): Promise<ISlot[] | null> {
         console.log('entered fetch slots service')
         try {
@@ -191,6 +191,41 @@ export default class doctorService implements IdoctorService {
 
     }
 
+    async updateBooking(bookingId: string): Promise<IBooking | null> {
+        try {
+            const appointmentData = await this._doctorRepository.updateBooking(bookingId);
+            console.log("appointmentData", appointmentData)
+            if (appointmentData) {
+                appointmentData.status = "Completed";
+                await appointmentData?.save();
+                return appointmentData;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async postPrescription(id: string, prescriptions: string[]): Promise<IBooking | null> {
+        try {
+            const prescriptionData = await this._doctorRepository.updateBooking(id);
+            
+            if (prescriptionData) {
+                if (!Array.isArray(prescriptionData.prescription)) {
+                    prescriptionData.prescription = []; 
+                }
+    
+                prescriptionData.prescription.push(...prescriptions);
+                await prescriptionData.save();
+            }
+            
+            return prescriptionData;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 
 }
 

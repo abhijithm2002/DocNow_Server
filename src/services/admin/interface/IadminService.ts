@@ -1,6 +1,7 @@
 import { Patient } from "../../../models/userModel";
 import { Doctor } from "../../../models/doctorModel";
 import { IBanner } from '../../../models/bannerModel'
+import { IBooking } from "../../../models/bookingModel";
 
 export interface IadminService {
     fetchUserList():Promise<Patient[] | null> 
@@ -11,5 +12,6 @@ export interface IadminService {
     createBanner(bannerData: Partial<IBanner>): Promise<IBanner | null>
     blockUnblockBanner(id: string, status: boolean): Promise<IBanner | null>
     fetchBanner(): Promise<IBanner[] | null>
+    bookings(): Promise<IBooking[] | null>
 }
 

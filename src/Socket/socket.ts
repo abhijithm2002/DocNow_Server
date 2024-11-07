@@ -49,24 +49,23 @@ export const initializeSocket = (server: HttpServer) => {
     });
 
     // Typing status
-    socket.on("typing", () => {
-      const receiverId = getReceiverSocketId(userId!);
+    socket.on("typing", ({ userId, conversationId }) => {
+      const receiverId = getReceiverSocketId(conversationId); 
       if (receiverId) {
-        io.to(receiverId).emit("typing", { userId });
+          io.to(receiverId).emit("typing", { userId }); 
       }
-    });
-
-    socket.on("stopTyping", () => {
-      const receiverId = getReceiverSocketId(userId!);
+  });
+  
+  socket.on("stopTyping", ({ userId, conversationId }) => {
+      const receiverId = getReceiverSocketId(conversationId); 
       if (receiverId) {
-        io.to(receiverId).emit("stopTyping", { userId });
+          io.to(receiverId).emit("stopTyping", { userId }); 
       }
-    });
+  });
+  
 
     // Handle new message
     socket.on("sendnewMessage", ({ to, from,message }: { to: string; from: string , message: string}) => {
-      console.log('message socket',message)
-      console.log('to in socket', to)
       if (!unreadMessages[to]) {
         unreadMessages[to] = {};
       }
@@ -94,34 +93,37 @@ export const initializeSocket = (server: HttpServer) => {
       }
     });
 
-    // socket.on(
-    //   "callingUser",
-    //   ({
-    //     Caller,
-    //     userId,
-    //     personalLink,
-    //   }: {
-    //     Caller: any;
-    //     userId: string;
-    //     personalLink: string;
-    //   }) => {
-    //     const receiverSocketId = getReceiverSocketId(userId);
-    //     if (receiverSocketId) {
-    //       io.to(receiverSocketId).emit("incomingCall", {
-    //         Caller,
-    //         userId,
-    //         personalLink,
-    //       });
-    //     }
-    //   }
-    // );
+    socket.on(
+      "callingUser",
+      ({
+        Caller,
+        userId,
+        personalLink,
+      }: {
+        Caller: any;
+        userId: string;
+        personalLink: string;
+      }) => {
+        console.log('enterd calling', Caller)
+        console.log('userId', userId)
+        console.log('personalLink', personalLink)
+        const receiverSocketId = getReceiverSocketId(userId);
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit("incomingCall", {
+            Caller,
+            userId,
+            personalLink,
+          });
+        }
+      }
+    );
 
-    // socket.on("onRejected", ({ Caller }: { Caller: any }) => {
-    //   const receiverSocketId = getReceiverSocketId(Caller._id);
-    //   if (receiverSocketId) {
-    //     io.to(receiverSocketId).emit("callRejected");
-    //   }
-    // });
+    socket.on("onRejected", ({ Caller }: { Caller: any }) => {
+      const receiverSocketId = getReceiverSocketId(Caller._id);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("callRejected");
+      }
+    });
   });
 
   return io;

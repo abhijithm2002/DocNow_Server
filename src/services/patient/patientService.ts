@@ -127,5 +127,13 @@ export default class patientService implements IpatientService {
             throw error
         }
     }
+
+    async fetchDoctorList(): Promise<Doctor[] | null> {
+        try {
+            return await this._doctorRespository.doctorFetch()
+        } catch (error) {
+            throw error
+        }
+    }
       
 }

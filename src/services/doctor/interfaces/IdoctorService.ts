@@ -13,4 +13,6 @@ export interface IdoctorService {
     deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null>
     fetchAppointments(doctorId: string): Promise<IBooking[] | null >
     getWalletHistory(doctorId: string): Promise<Doctor | null >
+    updateBooking(bookingId: string): Promise<IBooking | null>
+    postPrescription(id: string, prescriptions: string[]): Promise<IBooking | null>
 }

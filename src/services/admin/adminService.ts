@@ -5,6 +5,7 @@ import PatientRepository from "../../repositories/patientRepository";
 import doctorRepository from "../../repositories/doctorRepository";
 import { IBanner } from "../../models/bannerModel";
 import adminRepository from "../../repositories/adminRepository";
+import { IBooking } from "../../models/bookingModel";
 
 
 export default class adminService implements IadminService {
@@ -65,7 +66,7 @@ export default class adminService implements IadminService {
 
     async fetchDoctorList(): Promise<Doctor[] | null> {
         try {
-            return await this._doctorRepository.doctorFetch()
+            return await this._adminRepository.fetchDoctors()
         } catch (error) {
             throw error
         }
@@ -120,4 +121,14 @@ export default class adminService implements IadminService {
             throw error
         }
     }
+
+    async bookings(): Promise<IBooking[] | null> {
+        try {
+            return await this._adminRepository.bookings()
+        } catch (error) {
+            throw error
+        }
+    }
+
+    
 }

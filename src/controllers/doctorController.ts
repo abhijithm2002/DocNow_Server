@@ -202,7 +202,41 @@ export default class doctorController implements IdoctorController {
         }
         
     }
+
+
+    async updateBooking(req: Request, res: Response, next: NextFunction) {
+        console.log('entered update booking');
+        try {
+        const {bookingId} = req.body
+        console.log('booking id', bookingId);
+        const data = await this._doctorService.updateBooking(bookingId as string)
+        if(data) {
+            return res.status(200).json({message: 'updated booking successfully'})
+        } else {
+            return res.status(400).json({message: 'updating booking is unsuccessfull'})
+        }
+        } catch (error) {
+            res.status(500).json({message: 'internal server error'})
+        }
+        
+    }
     
+    async postPrescriptions(req: Request, res: Response, next: NextFunction){
+        try {
+            const {id, prescriptions} = req.body;
+            console.log('id', id);
+            console.log('prescription', prescriptions);
+            const prescriptionData = await this._doctorService.postPrescription(id, prescriptions)
+            if(prescriptionData) {
+                res.status(200).json({message: 'prescription added successfully',prescriptionData})
+            } else {
+                res.status(400).json({message: 'prescription adding unsuccessfull'})
+            }
+        } catch (error) {
+            res.status(500).json({message: 'Internal server error'})
+            
+        }
+    }
 }
 
 

@@ -280,4 +280,14 @@ export default class patientController implements IpatientController {
       return res.status(500).json({ message: 'Internal Server Error' });
   }
   }
+
+
+  async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
+    try {
+        const doctorData = await this._patientService.fetchDoctorList()
+        return res.status(200).json({doctorData})
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
 }

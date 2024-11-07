@@ -129,4 +129,17 @@ export default class adminController implements IadminController {
             throw error
         }
     }
+
+    async bookings(req: Request, res: Response, next: NextFunction) {
+        try {
+            const bookingData = await this._adminService.bookings();
+            if(bookingData) {
+                res.status(200).json({message: 'fetched bookings successfull', bookings: bookingData})
+            } else {
+             res.status(400).json({message: 'fetching bookings unsuccessfull'})
+            }
+        } catch (error) {
+             res.status(500).json({message: 'internal server error'})
+        }
+    }
 }
