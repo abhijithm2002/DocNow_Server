@@ -135,5 +135,42 @@ export default class patientService implements IpatientService {
             throw error
         }
     }
+
+
+    async postRating(patientId: string, doctorId: string, rating: number): Promise<Doctor | null> {
+        try {
+            const doctor = await this._doctorRespository.fetchDoctor(doctorId)
+            if(doctor) {
+                if(!doctor?.review) {
+                    doctor.review = []
+                }
+                const patientObjectId = new mongoose.Types.ObjectId(patientId);
+    
+                const existingReviewIndex = doctor?.review.findIndex((review) => review.patientId.toString() === patientObjectId.toString())
+    
+                if(existingReviewIndex > -1) {
+                    doctor.review[existingReviewIndex].rating = rating;
+                } else {
+                    const newRating = {
+                        patientId: patientObjectId,
+                        rating
+                    }
+                    doctor?.review.push(newRating)
+                }
+    
+                const totalRating = doctor?.review.reduce((acc, item) => acc + item.rating, 0);
+    
+                const averageRating = totalRating / doctor?.review.length;
+                doctor.rating = averageRating;
+                await doctor?.save();
+                return doctor;
+            } else {
+                return null
+            }
+           
+        } catch (error) {
+            throw error
+        }
+    }
       
 }

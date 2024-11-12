@@ -210,23 +210,30 @@ export default class doctorService implements IdoctorService {
     async postPrescription(id: string, prescriptions: string[]): Promise<IBooking | null> {
         try {
             const prescriptionData = await this._doctorRepository.updateBooking(id);
-            
+
             if (prescriptionData) {
                 if (!Array.isArray(prescriptionData.prescription)) {
-                    prescriptionData.prescription = []; 
+                    prescriptionData.prescription = [];
                 }
-    
+
                 prescriptionData.prescription.push(...prescriptions);
                 await prescriptionData.save();
             }
-            
+
             return prescriptionData;
         } catch (error) {
             throw error;
         }
     }
-    
 
+    async appointments(date: string, doctorId: string): Promise<IBooking[] | null> {
+        console.log('entered appointments service')
+        try {
+            return await this._doctorRepository.appointments(date, doctorId);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 

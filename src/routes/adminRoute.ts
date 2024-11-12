@@ -16,5 +16,6 @@ router.post('/createBanner',adminProtect,AdminController.createBanner.bind(Admin
 router.patch('/banner/:bannerId/blockUnblockBanner',adminProtect, AdminController.blockUnblockBanner.bind(AdminController))
 router.get('/fetchBanner',adminProtect, AdminController.fetchBanner.bind(AdminController))
 router.get('/bookings',adminProtect, AdminController.bookings.bind(AdminController))
+router.get('/bookingList',adminProtect, AdminController.bookingList.bind(AdminController))
 router.post('/refresh-token', refreshAdminAccessToken)
 export const adminRoutes = router;

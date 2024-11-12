@@ -31,6 +31,7 @@ router.get('/getBanner', PatientController.getBanner.bind(PatientController))
 router.patch('/addToFavourites', PatientController.addFavouriteDoctor.bind(PatientController))
 router.get('/getFavouriteDoctors/:patientId', PatientController.getFavouriteDoctors.bind(PatientController))
 router.get('/fetchDoctorList',protect, PatientController.fetchDoctorList.bind(PatientController))
+router.post('/postRating',protect, PatientController.postRating.bind(PatientController))
 
 
 

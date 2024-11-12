@@ -15,4 +15,5 @@ export interface IdoctorService {
     getWalletHistory(doctorId: string): Promise<Doctor | null >
     updateBooking(bookingId: string): Promise<IBooking | null>
     postPrescription(id: string, prescriptions: string[]): Promise<IBooking | null>
+    appointments(date:string,doctorId:string):Promise<IBooking[]|null>
 }

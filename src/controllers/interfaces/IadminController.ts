@@ -10,4 +10,5 @@ export interface IadminController {
     blockUnblockBanner(req: Request, res: Response, next: NextFunction):void;
     fetchBanner(req: Request, res: Response, next: NextFunction):void;
     bookings(req: Request, res: Response, next: NextFunction):void;
+    bookingList(req: Request, res: Response, next: NextFunction):void;
 }

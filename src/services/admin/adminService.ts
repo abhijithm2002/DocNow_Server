@@ -130,5 +130,11 @@ export default class adminService implements IadminService {
         }
     }
 
-    
+    async bookingList(page: string, date: string): Promise<{ bookings: IBooking[]; totalBookings: number; totalPages: number; } | null> {
+        try {
+            return await this._adminRepository.bookingList(page, date)
+        } catch (error) {
+            throw error
+        }
+    }
 }

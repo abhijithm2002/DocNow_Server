@@ -153,5 +153,21 @@ export default class doctorRepository implements IdoctorRepository {
         }
     }
 
+    async appointments(date: string, doctorId: string): Promise<IBooking[] | null> {
+        console.log('entered appointment repository')
+        try {
+            console.log('doctorid and date', doctorId, date)
+            const inputDate = new Date(date);
+            const isoDateString = inputDate.toISOString().split("T")[0];
+            console.log("inputdate", inputDate)
+            console.log("isodatestring", isoDateString)
+            return await Booking.find({
+              date: isoDateString,
+              doctorId: doctorId,
+            }).populate({ path: "patientId" });
+          } catch (err) {
+            throw err;
+          }
+    }
 }
 

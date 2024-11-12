@@ -290,4 +290,20 @@ export default class patientController implements IpatientController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+  async postRating(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {patientId, doctorId, rating} = req.body;
+      const ratingData = await this._patientService.postRating(patientId, doctorId, rating);
+      if(ratingData) {
+        res.status(200).json({message: 'Rating sumbitted'})
+      } else {
+        res.status(400).json({message: 'Rating not sumbitted'})
+
+      }
+    } catch (error) {
+      res.status(500).json({message: 'internal server error'})
+      
+    }
+  }
 }

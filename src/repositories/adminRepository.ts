@@ -44,5 +44,28 @@ export default class adminRepository implements IadminRepository {
             throw error
         }
     }
+
+    async bookingList(page: string, date: string): Promise<{ bookings: IBooking[]; totalBookings: number; totalPages: number; } | null> {
+        try {
+            const formatDate = (today: string) => {
+              const date = new Date(today);
+              const year = date.getUTCFullYear();
+              const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+              const day = String(date.getUTCDate()).padStart(2, "0");
+              return `${year}-${month}-${day}T00:00:00.000+00:00`;
+            };
+            const formattedDate = formatDate(date);
+            const bookings = await Booking.find({ date: formattedDate })
+              .populate({ path: "doctorId" })
+              .populate({ path: "patientId" });
+            const totalBookings = await Booking.find({
+              date: formattedDate,
+            }).countDocuments();
+            const totalPages = Math.ceil(totalBookings / 10);
+            return { bookings, totalBookings, totalPages };
+          } catch (error) {
+            throw error;
+          }
+    }
     
 }

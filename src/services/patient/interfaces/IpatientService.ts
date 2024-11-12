@@ -17,4 +17,5 @@ export interface IpatientService {
     addFavouriteDoctor(patientId: string, doctorId: string): Promise<string>
     getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null>;
     fetchDoctorList():Promise<Doctor[] | null> 
+    postRating(patientId: string, doctorId: string, rating: number):Promise<Doctor | null> 
 }

@@ -13,5 +13,6 @@ export interface IadminService {
     blockUnblockBanner(id: string, status: boolean): Promise<IBanner | null>
     fetchBanner(): Promise<IBanner[] | null>
     bookings(): Promise<IBooking[] | null>
+    bookingList(page : string, date: string): Promise<{ bookings: IBooking[];totalBookings: number; totalPages: number; } | null>
 }
 
