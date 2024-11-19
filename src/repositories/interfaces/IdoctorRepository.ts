@@ -1,6 +1,7 @@
 import { IBooking } from "../../models/bookingModel";
 import { Doctor } from "../../models/doctorModel";
 import Slots, { ISlot } from "../../models/slotModel";
+import { INotifications } from "../../models/notificationModel";
 
 export interface IdoctorRepository {
     signupDoctor(userData: Partial<Doctor>): Promise<Doctor | null>
@@ -15,4 +16,5 @@ export interface IdoctorRepository {
     getWalletHistory(doctorId: string): Promise<Doctor | null >
     updateBooking(bookingId: string): Promise<IBooking | null>
     appointments(date:string,doctorId:string):Promise<IBooking[]|null>
+    getNotification(doctorId:string):Promise<INotifications[]|null>
 }

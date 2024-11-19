@@ -27,6 +27,7 @@ router.get('/wallet-history/:doctorId', protectdoctor,DoctorController.getWallet
 router.patch('/updateBooking', protectdoctor,DoctorController.updateBooking.bind(DoctorController))
 router.post('/postPrescription', protectdoctor,DoctorController.postPrescriptions.bind(DoctorController))
 router.get('/drAppointments', protectdoctor,DoctorController.drAppointments.bind(DoctorController))
+router.get('/getNotification/:doctorId', protectdoctor,DoctorController.getNotification.bind(DoctorController))
 
 
 router.post('/refresh-token', refreshAccessTokenDoctor)

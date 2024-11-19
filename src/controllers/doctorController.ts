@@ -243,14 +243,31 @@ export default class doctorController implements IdoctorController {
             const {date, doctorId} = req.query;
             console.log('dr app', date, doctorId)
             const appointmentData = await this._doctorService.appointments(date as string, doctorId as string);
-            console.log("appointmentDat////a", appointmentData)
             if(appointmentData) {
                 res.status(200).json({message: 'fetched dr appointments successfull', appointments: appointmentData})
             } else {
-                res.status(400).json({message: 'fetched dr appointments unsuccessfull'})
+                res.status(400).json({message: 'fetching dr appointments unsuccessfull'})
 
             }
         } catch (error) { 
+            res.status(500).json({message: 'internal server error'})
+            
+        }
+    }
+
+    async getNotification(req: Request, res: Response, next: NextFunction) {
+        try {
+            const doctorId = req.params.doctorId;
+            if(doctorId) {
+                const notificationData = await this._doctorService.getNotification(doctorId as string)
+                if(notificationData) {
+                    res.status(200).json({message: 'fetched notification successfully', data: notificationData})
+                } else {
+                res.status(400).json({message: 'fetching notification unsuccessfull'})
+                }
+            }
+
+        } catch (error) {
             res.status(500).json({message: 'internal server error'})
             
         }

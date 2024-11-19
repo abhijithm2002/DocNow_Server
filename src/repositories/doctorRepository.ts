@@ -2,6 +2,7 @@ import Doctors, { Doctor } from "../models/doctorModel";
 import { IdoctorRepository } from "./interfaces/IdoctorRepository";
 import Slots, { ISlot } from "../models/slotModel";
 import Booking, { IBooking } from "../models/bookingModel";
+import   Notification, { INotifications } from "../models/notificationModel";
 
 export default class doctorRepository implements IdoctorRepository {
     async signupDoctor(userData: Partial<Doctor>): Promise<Doctor | null> {
@@ -168,6 +169,15 @@ export default class doctorRepository implements IdoctorRepository {
           } catch (err) {
             throw err;
           }
+    }
+
+     async getNotification(doctorId: string): Promise<INotifications[] | null> {
+        try {
+            const notificationData = await Notification.find({doctorId}).sort({createdAt: -1}).exec();
+            return notificationData
+        } catch (error) {
+            throw error
+        }
     }
 }
 

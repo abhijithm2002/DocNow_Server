@@ -13,4 +13,5 @@ export interface IdoctorController {
     updateBooking(req: Request, res: Response, next: NextFunction): void;
     postPrescriptions(req: Request, res: Response, next: NextFunction): void;
     drAppointments(req: Request, res: Response, next: NextFunction): void;
+    getNotification(req: Request, res: Response, next: NextFunction): void;
 }

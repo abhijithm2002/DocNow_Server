@@ -1,6 +1,7 @@
 import { Doctor } from "../../../models/doctorModel";
 import { ISlot } from '../../../models/slotModel';
 import { IBooking } from "../../../models/bookingModel";
+import { INotifications } from "../../../models/notificationModel";
 
 
 export interface IdoctorService {
@@ -16,4 +17,6 @@ export interface IdoctorService {
     updateBooking(bookingId: string): Promise<IBooking | null>
     postPrescription(id: string, prescriptions: string[]): Promise<IBooking | null>
     appointments(date:string,doctorId:string):Promise<IBooking[]|null>
+    getNotification(doctorId:string):Promise<INotifications[] |null>
+
 }

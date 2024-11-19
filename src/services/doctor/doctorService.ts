@@ -3,6 +3,7 @@ import { IdoctorService } from "./interfaces/IdoctorService";
 import doctorRepository from "../../repositories/doctorRepository";
 import Slots, { ISlot } from "../../models/slotModel";
 import { IBooking } from "../../models/bookingModel";
+import { INotifications } from "../../models/notificationModel";
 
 export default class doctorService implements IdoctorService {
     private _doctorRepository: doctorRepository;
@@ -232,6 +233,14 @@ export default class doctorService implements IdoctorService {
             return await this._doctorRepository.appointments(date, doctorId);
         } catch (error) {
             throw error;
+        }
+    }
+
+    async getNotification(doctorId: string): Promise<INotifications[] | null> {
+        try {
+            return await this._doctorRepository.getNotification(doctorId);
+        } catch (error) {
+            throw error
         }
     }
 }
