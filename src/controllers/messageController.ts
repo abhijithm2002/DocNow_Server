@@ -68,8 +68,9 @@ export default class messageController implements ImessageController {
         }
     }
 
+    
+
     async getMessages(req: Request, res: Response, next: NextFunction) {
-        console.log('entered getmessages');
         
         try {
             const {id , senderId} = req.params;
@@ -78,7 +79,7 @@ export default class messageController implements ImessageController {
              
             const conversation = await this._messageService.getMessages(id as string, senderId as string);
             if(conversation?.messages) {
-                return res.status(200).json({message: conversation.messages})
+                return res.status(200).json({message: conversation.messages, lastMessage: conversation.lastMessage})
             } else {
                 return res.status(200).json([])
             }

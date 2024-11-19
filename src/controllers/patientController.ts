@@ -201,6 +201,41 @@ export default class patientController implements IpatientController {
     }
   }
 
+//   async myBookings(req: Request, res: Response, next: NextFunction) {
+//     console.log('Entered my bookings controller');
+//     try {
+//       const {patientId} = req.params;
+//         const {  page = '1', limit = '10' } = req.query;
+//       console.log('patientid',patientId)
+//       console.log('page',page)
+//       console.log('limit',limit)
+//         const pageNumber = parseInt(page as string, 10);
+//         const limitNumber = parseInt(limit as string, 10);
+
+//         const { data, totalCount } = await this._patientService.myBookings(
+//             patientId as string,
+//             pageNumber,
+//             limitNumber
+//         );
+
+//         if (data) {
+//             return res.status(200).json({
+//                 message: 'My bookings fetched successfully',
+//                 data,
+//                 totalCount,
+//                 totalPages: Math.ceil(totalCount / limitNumber),
+//                 currentPage: pageNumber,
+//             });
+//         } else {
+//             return res.status(400).json({ message: 'No bookings found' });
+//         }
+//     } catch (error) {
+//         console.error('Error in fetch my bookings:', error);
+//         res.status(500).json({ message: 'Internal Server Error' });
+//     }
+// }
+
+
   async cancelBooking(req: Request, res: Response, next: NextFunction) {
     console.log('entered cancel booking controller');
     try {
@@ -303,6 +338,20 @@ export default class patientController implements IpatientController {
       }
     } catch (error) {
       res.status(500).json({message: 'internal server error'})
+      
+    }
+  }
+
+  async fetchAdmin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const adminData = await this._patientService.fetchAdmin();
+      if(adminData) {
+        res.status(200).json({message: 'fetched Admin details', data: adminData})
+      } else {
+        res.status(400).json({message: 'fetch admin details unsuccessfull'})
+      }
+    } catch (error) {
+      res.status(500).json({message: 'Internal server error'})
       
     }
   }

@@ -125,7 +125,7 @@ export default class doctorRepository implements IdoctorRepository {
     async fetchAppointments(doctorId: string): Promise<IBooking[] | null> {
         console.log('entered fetchAppointments repo')
         try {
-            const AppointmentData = await Booking.find({ doctorId }).populate('patientId', 'name').sort({ date: -1 })
+            const AppointmentData = await Booking.find({ doctorId }).populate('patientId').sort({ date: -1 })
             console.log('fetched  appointment data', AppointmentData)
             return AppointmentData
         } catch (error) {

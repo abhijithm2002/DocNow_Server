@@ -1,8 +1,9 @@
-import mongoose,{Document, model, Model, Schema} from "mongoose";
+import mongoose,{Document, model, Model, Schema, Types} from "mongoose";
 
 export interface IConversation extends Document {
     participants: mongoose.Types.ObjectId[],
     messages: mongoose.Types.ObjectId[],
+    lastMessage: Types.ObjectId; 
 }
 
 const conversationSchema: Schema<IConversation> = new Schema({
@@ -18,7 +19,12 @@ const conversationSchema: Schema<IConversation> = new Schema({
             ref: 'Message',
             default: []
         }
-    ]
+    ],
+    lastMessage: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message', // Reference to Message model
+        required: false // Optional, depending on if you want this to be required
+    },
 },{timestamps: true})
 
 

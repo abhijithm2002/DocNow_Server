@@ -66,12 +66,19 @@ export default class adminService implements IadminService {
 
     async fetchDoctorList(): Promise<Doctor[] | null> {
         try {
-            return await this._adminRepository.fetchDoctors()
+            return await this._adminRepository.fetchDoctor()
         } catch (error) {
             throw error
         }
     }
 
+    async fetchDoctors(): Promise<Doctor[] | null> {
+        try {
+            return await this._adminRepository.fetchDoctors()
+        } catch (error) {
+            throw error
+        }
+    }
     async verifyDocuments(id: string): Promise<Doctor | null> {
         console.log('entered verifyDocuments service')
         try {

@@ -8,6 +8,7 @@ export interface IadminService {
     blockUnblockPatient(id: string, status: boolean): Promise<Patient | null>
     blockUnblockDoctor(id: string, status: boolean): Promise<Doctor | null>
     fetchDoctorList():Promise<Doctor[] | null> 
+    fetchDoctors():Promise<Doctor[] | null> 
     verifyDocuments(id: string): Promise<Doctor | null>
     createBanner(bannerData: Partial<IBanner>): Promise<IBanner | null>
     blockUnblockBanner(id: string, status: boolean): Promise<IBanner | null>

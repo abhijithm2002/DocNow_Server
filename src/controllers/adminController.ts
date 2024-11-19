@@ -65,6 +65,14 @@ export default class adminController implements IadminController {
             throw error
         }
     }
+    async fetchDoctors(req: Request, res: Response, next: NextFunction) {
+        try {
+            const doctorData = await this._adminService.fetchDoctors()
+            return res.status(200).json({ doctorData })
+        } catch (error) {
+            throw error
+        }
+    }
 
     async verifyDocuments(req: Request, res: Response, next: NextFunction) {
         console.log('entered verifyDocuments controller')

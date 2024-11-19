@@ -184,7 +184,7 @@ export default class doctorController implements IdoctorController {
         }
         
     }
-
+    
     async getWalletHistory(req: Request, res: Response, next: NextFunction) {
         console.log('entered wallet history controller');
         try {

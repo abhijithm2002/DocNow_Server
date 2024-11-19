@@ -4,6 +4,9 @@ import Doctors, { Doctor } from "../models/doctorModel";
 import mongoose from "mongoose";
 import { IpatientRepository } from "./interfaces/IpatientRepository";
 import Banner, { IBanner } from "../models/bannerModel";
+import {io} from '../index'
+import { getReceiverSocketId } from "../Socket/socket";
+
 
 
 export default class PatientRepository implements IpatientRepository {
@@ -106,7 +109,21 @@ export default class PatientRepository implements IpatientRepository {
             await doctor.save();
             await patient.save();
         
-            return await Booking.create(userData);
+            // return await Booking.create(userData);
+            const booking = await Booking.create(userData);
+            const receiverSocketId = getReceiverSocketId(doctor._id as string);
+            console.log('////////////////////////////////////////')
+            console.log('reciever socket id', receiverSocketId)
+        if (booking) {
+            const notificationMessage = `New booking from ${patient.name} on ${userData.date}.`;
+            io.to(receiverSocketId as string).emit("newBooking", {
+                message: notificationMessage,
+                bookingDetails: booking,
+            });
+            console.log("Notification emitted to doctor:", doctor._id);
+        }
+    
+        return booking;
         } catch (err) {
             console.error("Error in postbookings:", err);
             throw err;
@@ -137,6 +154,33 @@ export default class PatientRepository implements IpatientRepository {
             throw error
         }
     }
+
+    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
+    //     console.log('Entered my bookings repository');
+    //     try {
+    //         const skip = (page - 1) * limit;
+    
+    //         // Fetch paginated bookings
+    //         const bookings = await Booking.find({ patientId: patientId })
+    //             .populate({
+    //                 path: 'doctorId',
+    //                 populate: {
+    //                     path: 'expertise',
+    //                 },
+    //             })
+    //             .sort({ updatedAt: -1 })
+    //             .skip(skip) // Skip records for pagination
+    //             .limit(limit); // Limit the number of records
+    
+    //         // Count total records
+    //         const totalCount = await Booking.countDocuments({ patientId: patientId });
+    
+    //         return { data: bookings, totalCount };
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
+    
 
     async cancelBooking(bookingId: string): Promise<IBooking | null> {
         console.log('entered cancel booking repo');
@@ -236,6 +280,14 @@ export default class PatientRepository implements IpatientRepository {
         } catch (error) {
             console.error('Error in getFavouriteDoctors repository:', error); 
             throw error;
+        }
+    }
+
+    async fetchAdmin(): Promise<Patient | null> {
+        try {
+           return await Patients.findOne({is_admin: true})
+        } catch (error) {
+            throw error
         }
     }
     

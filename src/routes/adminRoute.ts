@@ -11,6 +11,7 @@ router.get('/fetchUserList',adminProtect, AdminController.fetchUserList.bind(Adm
 router.patch('/patient/:userId/blockUnblock',adminProtect, AdminController.blockUnblockPatient.bind(AdminController))
 router.patch('/doctor/:userId/blockUnblock',adminProtect, AdminController.blockUnblockDoctor.bind(AdminController))
 router.get('/fetchDoctorList',adminProtect, AdminController.fetchDoctorList.bind(AdminController))
+router.get('/fetchDoctors',adminProtect, AdminController.fetchDoctors.bind(AdminController))
 router.patch('/doctor/:doctorId/verify',adminProtect, AdminController.verifyDocuments.bind(AdminController))
 router.post('/createBanner',adminProtect,AdminController.createBanner.bind(AdminController))
 router.patch('/banner/:bannerId/blockUnblockBanner',adminProtect, AdminController.blockUnblockBanner.bind(AdminController))

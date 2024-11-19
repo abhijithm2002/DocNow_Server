@@ -86,6 +86,16 @@ export default class patientService implements IpatientService {
         }
     }
 
+    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
+    //     console.log('Entered my bookings service');
+    //     try {
+    //         return await this._patientRepository.myBookings(patientId, page, limit);
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
+    
+
     async cancelBooking(bookingId: string): Promise<IBooking | null> {
         try {
             return await this._patientRepository.cancelBooking(bookingId)
@@ -168,6 +178,14 @@ export default class patientService implements IpatientService {
                 return null
             }
            
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchAdmin(): Promise<Patient | null> {
+        try {
+            return await this._patientRepository.fetchAdmin();
         } catch (error) {
             throw error
         }

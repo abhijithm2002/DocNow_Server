@@ -26,7 +26,7 @@ export const initializeSocket = (server: HttpServer) => {
     cors: {
       origin: 'http://localhost:5173', 
       methods: ["GET", "POST"],
-      credentials: true, // Allow sending cookies
+      credentials: true, 
     },
   });
 
@@ -48,7 +48,6 @@ export const initializeSocket = (server: HttpServer) => {
       io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 
-    // Typing status
     socket.on("typing", ({ userId, conversationId }) => {
       const receiverId = getReceiverSocketId(conversationId); 
       if (receiverId) {
@@ -75,15 +74,7 @@ export const initializeSocket = (server: HttpServer) => {
       unreadMessages[to][from] += 1;
 
       const receiverSocketId = getReceiverSocketId(to);
-      // // if (receiverSocketId) {
-      // //   io.to(receiverSocketId).emit("newMessage", {
-      // //     recieverId: to,
-      // //     senderId: from,
-      // //     unreadCount: unreadMessages[to][from],
-      // //     message,
-          
-      // //   });
-      // }
+     
     });
 
     // Mark messages as read
@@ -122,6 +113,17 @@ export const initializeSocket = (server: HttpServer) => {
       const receiverSocketId = getReceiverSocketId(Caller._id);
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("callRejected");
+      }
+    });
+
+
+    socket.on("newBooking", (data) => {
+      const receiverSocketId = getReceiverSocketId(data.receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("newBooking", {
+          message: `New booking from ${data.senderName}`,
+          bookingDetails: data.bookingDetails,
+        });
       }
     });
   });

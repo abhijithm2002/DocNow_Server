@@ -12,9 +12,11 @@ export interface IpatientRepository {
     postBooking(userData: Partial<IBooking>) : Promise< IBooking| null >
     fetchBookings(id: string, date: string) : Promise< IBooking[] | null >
     myBookings(patientId: string) : Promise< IBooking[] | null >
+    // myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }>
     cancelBooking(bookingId: string) : Promise< IBooking | null >
     getWalletHistory(patientId: string) : Promise<Patient | null >
     getBanner() : Promise<IBanner[] | null >
     addFavouriteDoctor(patientId: string, doctorId: string): Promise<string>
     getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null>
+    fetchAdmin(): Promise<Patient | null>
 }
