@@ -272,6 +272,32 @@ export default class doctorController implements IdoctorController {
             
         }
     }
+
+    async markAsRead(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {notificationId} = req.params
+            console.log('notification id', notificationId);
+            const updatedNotification  = await this._doctorService.markAsRead(notificationId as string);
+            if(updatedNotification) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Notification marked as read",
+                    data: updatedNotification,
+                  });
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: "Notification not found",
+                  });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to update notification",
+                error: error
+              });
+        }
+    }
 }
 
 

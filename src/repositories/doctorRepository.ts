@@ -171,10 +171,28 @@ export default class doctorRepository implements IdoctorRepository {
           }
     }
 
-     async getNotification(doctorId: string): Promise<INotifications[] | null> {
+    async getNotification(doctorId: string): Promise<INotifications[] | null> {
         try {
-            const notificationData = await Notification.find({doctorId}).sort({createdAt: -1}).exec();
-            return notificationData
+            const notificationData = await Notification.find({ 
+                doctorId, 
+                recipientType: "doctor"
+            }).sort({ createdAt: -1 }).exec();
+            return notificationData;
+        } catch (error) {
+            console.error("Error fetching notifications for doctor:", error);
+            throw error;
+        }
+    }
+    
+
+    async markAsRead(notificationId: string): Promise<INotifications | null> {
+        try {
+            const updatedNotification = await Notification.findByIdAndUpdate(notificationId, 
+                {isRead: true},
+                {new: true}
+            )
+            console.log(updatedNotification)
+            return updatedNotification
         } catch (error) {
             throw error
         }

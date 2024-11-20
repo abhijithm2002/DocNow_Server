@@ -111,25 +111,44 @@ export default class PatientRepository implements IpatientRepository {
 
             const booking = await Booking.create(userData);
 
-            const notificationMessage = `New booking from ${patient.name} on ${userData.date}.`;
-            const notification = new Notification({
-                doctorId: userData.doctorId,
-                patientId: userData.patientId,
-                message: notificationMessage,
+            // Create notifications
+        const doctorNotificationMessage = `New booking from ${patient.name} on ${userData.date}.`;
+        const patientNotificationMessage = `Reminder: Your appointment with Dr. ${doctor.name} is scheduled on ${userData.date} at ${userData.shift}.`;
+
+        const doctorNotification = new Notification({
+            doctorId: userData.doctorId,
+            patientId: userData.patientId,
+            message: doctorNotificationMessage,
+            recipientType: 'doctor'
+        });
+        await doctorNotification.save();
+
+        const patientNotification = new Notification({
+            doctorId: userData.doctorId,
+            patientId: userData.patientId,
+            message: patientNotificationMessage,
+            recipientType: 'patient'
+        });
+        await patientNotification.save();
+
+        const doctorSocketId = getReceiverSocketId(doctor._id as string);
+        const patientSocketId = getReceiverSocketId(patient._id as string);
+
+        if (booking) {
+            io.to(doctorSocketId as string).emit("newBooking", {
+                message: doctorNotificationMessage,
+                bookingDetails: booking,
             });
-            await notification.save();
+            console.log("Notification emitted to doctor:", doctor._id);
 
-            const receiverSocketId = getReceiverSocketId(doctor._id as string);
-            
-            if (booking) {
-                io.to(receiverSocketId as string).emit("newBooking", {
-                    message: notificationMessage,
-                    bookingDetails: booking,
-                });
-                console.log("Notification emitted to doctor:", doctor._id);
-            }
+            io.to(patientSocketId as string).emit("appointmentReminder", {
+                message: patientNotificationMessage,
+                bookingDetails: booking,
+            });
+            console.log("Notification emitted to patient:", patient._id);
+        }
 
-            return booking;
+        return booking;
         } catch (err) {
             console.error("Error in postbookings:", err);
             throw err;
@@ -296,6 +315,32 @@ export default class PatientRepository implements IpatientRepository {
     async fetchAdmin(): Promise<Patient | null> {
         try {
             return await Patients.findOne({ is_admin: true })
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getNotification(patientId: string): Promise<INotifications[] | null> {
+        try {
+            const notificationData = await Notification.find({ 
+                patientId, 
+                recipientType: "patient"
+            }).sort({ createdAt: -1 }).exec();
+            return notificationData;
+        } catch (error) {
+            console.error("Error fetching notifications for doctor:", error);
+            throw error;
+        }
+    }
+
+    async markAsRead(notificationId: string): Promise<INotifications | null> {
+        try {
+            const updatedNotification = await Notification.findByIdAndUpdate(notificationId, 
+                {isRead: true},
+                {new: true}
+            )
+            console.log(updatedNotification)
+            return updatedNotification
         } catch (error) {
             throw error
         }

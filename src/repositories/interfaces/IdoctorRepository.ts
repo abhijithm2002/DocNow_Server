@@ -17,4 +17,5 @@ export interface IdoctorRepository {
     updateBooking(bookingId: string): Promise<IBooking | null>
     appointments(date:string,doctorId:string):Promise<IBooking[]|null>
     getNotification(doctorId:string):Promise<INotifications[]|null>
+    markAsRead(notificationId:string):Promise<INotifications|null>
 }

@@ -3,6 +3,7 @@ import { Patient } from "../../models/userModel";
 import { IBanner } from "../../models/bannerModel";
 import { Doctor } from "../../models/doctorModel";
 import mongoose from "mongoose";
+import { INotifications } from "../../models/notificationModel";
 
 export interface IpatientRepository {
     signupPatient(userData: Partial<Patient>): Promise<Patient | null >
@@ -19,4 +20,6 @@ export interface IpatientRepository {
     addFavouriteDoctor(patientId: string, doctorId: string): Promise<string>
     getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null>
     fetchAdmin(): Promise<Patient | null>
+    getNotification(patientId:string):Promise<INotifications[]|null>
+    markAsRead(notificationId:string):Promise<INotifications|null>
 }

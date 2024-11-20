@@ -243,6 +243,14 @@ export default class doctorService implements IdoctorService {
             throw error
         }
     }
+
+    async markAsRead(notificationId: string): Promise<INotifications | null> {
+        try {
+            return await this._doctorRepository.markAsRead(notificationId)
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 

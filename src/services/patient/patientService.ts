@@ -6,6 +6,7 @@ import doctorRepository from "../../repositories/doctorRepository";
 import { IBooking } from "../../models/bookingModel";
 import { IBanner } from "../../models/bannerModel";
 import mongoose from "mongoose";
+import { INotifications } from "../../models/notificationModel";
 
 
 
@@ -186,6 +187,22 @@ export default class patientService implements IpatientService {
     async fetchAdmin(): Promise<Patient | null> {
         try {
             return await this._patientRepository.fetchAdmin();
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getNotification(patientId: string): Promise<INotifications[] | null> {
+        try {
+            return await this._patientRepository.getNotification(patientId);
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async markAsRead(notificationId: string): Promise<INotifications | null> {
+        try {
+            return await this._patientRepository.markAsRead(notificationId)
         } catch (error) {
             throw error
         }

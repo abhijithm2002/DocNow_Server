@@ -18,4 +18,8 @@ export interface IpatientController{
     fetchDoctorList(req: Request, res: Response, next: NextFunction): void;  
     postRating(req: Request, res: Response, next: NextFunction): void;  
     fetchAdmin(req: Request, res: Response, next: NextFunction): void;  
+    getNotification(req: Request, res: Response, next: NextFunction): void;
+    markAsRead(req: Request, res: Response, next: NextFunction): void;
+
+
 }

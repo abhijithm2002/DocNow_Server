@@ -6,6 +6,7 @@ export interface INotifications extends Document {
     createdAt: Date;
     message: string;
     isRead: boolean; 
+    recipientType: "doctor" | "patient"; 
 }
 
 const notificationSchema: Schema = new Schema({
@@ -31,7 +32,8 @@ const notificationSchema: Schema = new Schema({
         type: Boolean,
         default: false, 
     },
-});
+    recipientType: { type: String, enum: ["doctor", "patient"], required: true }
+},{ timestamps: true });
 
 const Booking = mongoose.model<INotifications>("Notification", notificationSchema);
 export default Booking;
