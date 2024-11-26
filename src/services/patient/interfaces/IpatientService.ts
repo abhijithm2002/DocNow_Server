@@ -18,7 +18,8 @@ export interface IpatientService {
     getBanner(): Promise<IBanner[] | null>
     addFavouriteDoctor(patientId: string, doctorId: string): Promise<string>
     getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null>;
-    fetchDoctorList():Promise<Doctor[] | null> 
+    // fetchDoctorList():Promise<Doctor[] | null> 
+    fetchDoctorList({ page, limit, search, specialization }: { page: number; limit: number; search: string; specialization: string;}): Promise<{ doctors: Doctor[]; total: number }>
     postRating(patientId: string, doctorId: string, rating: number):Promise<Doctor | null> 
     fetchAdmin():Promise<Patient | null> 
     getNotification(patientId:string):Promise<INotifications[] |null>

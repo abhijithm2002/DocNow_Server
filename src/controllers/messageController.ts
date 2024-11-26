@@ -14,7 +14,8 @@ export default class messageController implements ImessageController {
     async sendMessage(req: Request, res: Response, next: NextFunction) {
         console.log('entered sendmessage')
         try {
-            const { message } = req.body;
+            const { message, senderName } = req.body;
+            console.log('sendername .....', senderName)
             const { id, senderId } = req.params;
             console.log("message", message)
             console.log("id", id)
@@ -39,7 +40,7 @@ export default class messageController implements ImessageController {
                 messageContent = await uploadImageToCloudinary(imagePath);
             }
 
-            const data = await this._messageService.sendMessage(id, senderId, messageContent, messageType);
+            const data = await this._messageService.sendMessage(id, senderId, messageContent, messageType, senderName);
             return res.status(200).json({ newMessage: data })
 
         } catch (error) {

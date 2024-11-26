@@ -139,13 +139,41 @@ export default class patientService implements IpatientService {
         }
     }
 
-    async fetchDoctorList(): Promise<Doctor[] | null> {
+    // async fetchDoctorList(): Promise<Doctor[] | null> {
+    //     try {
+    //         return await this._doctorRespository.doctorFetch()
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // }
+
+    async fetchDoctorList({
+        page,
+        limit,
+        search,
+        specialization,
+        
+    }: {
+        page: number;
+        limit: number;
+        search: string;
+        specialization: string;
+        
+    }): Promise<{ doctors: Doctor[]; total: number }> {
         try {
-            return await this._doctorRespository.doctorFetch()
+            return await this._doctorRespository.doctorFetch({
+                page,
+                limit,
+                search,
+                specialization,
+               
+            });
         } catch (error) {
-            throw error
+            throw error;
         }
     }
+    
+    
 
 
     async postRating(patientId: string, doctorId: string, rating: number): Promise<Doctor | null> {

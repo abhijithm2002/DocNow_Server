@@ -42,16 +42,35 @@ class doctorController {
     }
     editDoctor(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entering edit doctor controller');
             try {
-                const { name, email, mobile, bio, gender, expertise, bookingfees, currentWorkingHospital, experienceYears, medicalLicenseNo, photo, education } = req.body;
-                const doctorData = { name, email, photo, mobile, gender, bio, expertise, bookingfees, currentWorkingHospital, experienceYears, medicalLicenseNo, education };
-                const data = yield this._doctorService.editDoctor(doctorData);
-                return res.status(200).json({ message: " Doctor Profile Updated", data });
+                const { name, email, mobile, bio, gender, expertise, bookingfees, currentWorkingHospital, experienceYears, medicalLicenseNo, photo, documents, address, // Use the nested address object directly
+                 } = req.body;
+                const doctorData = {
+                    name,
+                    email,
+                    mobile,
+                    bio,
+                    gender,
+                    expertise,
+                    bookingfees,
+                    currentWorkingHospital,
+                    experienceYears,
+                    medicalLicenseNo,
+                    photo,
+                    documents,
+                    address, // Keep it as an object
+                };
+                const updatedDoctor = yield this._doctorService.editDoctor(doctorData);
+                if (updatedDoctor) {
+                    return res.status(200).json({ message: 'Doctor Profile Updated', data: updatedDoctor });
+                }
+                else {
+                    return res.status(404).json({ message: 'Doctor not found' });
+                }
             }
             catch (error) {
-                console.error('Error in editprofile:', error);
-                res.status(500).json({ message: 'Internal Server Error' });
+                console.error('Error in editDoctor controller:', error);
+                return res.status(500).json({ message: 'Internal Server Error' });
             }
         });
     }
@@ -201,6 +220,126 @@ class doctorController {
             }
             catch (error) {
                 console.log('error in fetching wallet history', error);
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        });
+    }
+    updateBooking(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered update booking');
+            try {
+                const { bookingId } = req.body;
+                console.log('booking id', bookingId);
+                const data = yield this._doctorService.updateBooking(bookingId);
+                if (data) {
+                    return res.status(200).json({ message: 'updated booking successfully' });
+                }
+                else {
+                    return res.status(400).json({ message: 'updating booking is unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    postPrescriptions(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id, prescriptions } = req.body;
+                console.log('id', id);
+                console.log('prescription', prescriptions);
+                const prescriptionData = yield this._doctorService.postPrescription(id, prescriptions);
+                if (prescriptionData) {
+                    res.status(200).json({ message: 'prescription added successfully', prescriptionData });
+                }
+                else {
+                    res.status(400).json({ message: 'prescription adding unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        });
+    }
+    drAppointments(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { date, doctorId } = req.query;
+                console.log('dr app', date, doctorId);
+                const appointmentData = yield this._doctorService.appointments(date, doctorId);
+                if (appointmentData) {
+                    res.status(200).json({ message: 'fetched dr appointments successfull', appointments: appointmentData });
+                }
+                else {
+                    res.status(400).json({ message: 'fetching dr appointments unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    getNotification(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const doctorId = req.params.doctorId;
+                if (doctorId) {
+                    const notificationData = yield this._doctorService.getNotification(doctorId);
+                    if (notificationData) {
+                        res.status(200).json({ message: 'fetched notification successfully', data: notificationData });
+                    }
+                    else {
+                        res.status(400).json({ message: 'fetching notification unsuccessfull' });
+                    }
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    markAsRead(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { notificationId } = req.params;
+                console.log('notification id', notificationId);
+                const updatedNotification = yield this._doctorService.markAsRead(notificationId);
+                if (updatedNotification) {
+                    return res.status(200).json({
+                        success: true,
+                        message: "Notification marked as read",
+                        data: updatedNotification,
+                    });
+                }
+                else {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Notification not found",
+                    });
+                }
+            }
+            catch (error) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to update notification",
+                    error: error
+                });
+            }
+        });
+    }
+    fetchAdmin(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const adminData = yield this._doctorService.fetchAdmin();
+                if (adminData) {
+                    res.status(200).json({ message: 'fetched Admin details', data: adminData });
+                }
+                else {
+                    res.status(400).json({ message: 'fetch admin details unsuccessfull' });
+                }
+            }
+            catch (error) {
                 res.status(500).json({ message: 'Internal server error' });
             }
         });

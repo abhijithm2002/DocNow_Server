@@ -11,9 +11,9 @@ export default class messageService implements ImessageService {
         this._messageRepository = new MessageRepository();
     }    
 
-    async sendMessage(id: string, senderId: string, message: string, messageType: string): Promise<IMessage | null> {
+    async sendMessage(id: string, senderId: string, message: string, messageType: string, senderName: string): Promise<IMessage | null> {
         try {
-            return await this._messageRepository.sendMessage(id, senderId, message, messageType);
+            return await this._messageRepository.sendMessage(id, senderId, message, messageType, senderName);
         } catch (error) {
             throw error
         }

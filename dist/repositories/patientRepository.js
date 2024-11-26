@@ -15,7 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bookingModel_1 = __importDefault(require("../models/bookingModel"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const bannerModel_1 = __importDefault(require("../models/bannerModel"));
+const index_1 = require("../index");
+const socket_1 = require("../Socket/socket");
+const notificationModel_1 = __importDefault(require("../models/notificationModel"));
 class PatientRepository {
     signupPatient(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -119,7 +123,39 @@ class PatientRepository {
                 }
                 yield doctor.save();
                 yield patient.save();
-                return yield bookingModel_1.default.create(userData);
+                const booking = yield bookingModel_1.default.create(userData);
+                // Create notifications
+                const doctorNotificationMessage = `New booking from ${patient.name} on ${userData.date}.`;
+                const patientNotificationMessage = `Reminder: Your appointment with Dr. ${doctor.name} is scheduled on ${userData.date} at ${userData.shift}.`;
+                const doctorNotification = new notificationModel_1.default({
+                    doctorId: userData.doctorId,
+                    patientId: userData.patientId,
+                    message: doctorNotificationMessage,
+                    recipientType: 'doctor'
+                });
+                yield doctorNotification.save();
+                const patientNotification = new notificationModel_1.default({
+                    doctorId: userData.doctorId,
+                    patientId: userData.patientId,
+                    message: patientNotificationMessage,
+                    recipientType: 'patient'
+                });
+                yield patientNotification.save();
+                const doctorSocketId = (0, socket_1.getReceiverSocketId)(doctor._id);
+                const patientSocketId = (0, socket_1.getReceiverSocketId)(patient._id);
+                if (booking) {
+                    index_1.io.to(doctorSocketId).emit("newBooking", {
+                        message: doctorNotificationMessage,
+                        bookingDetails: booking,
+                    });
+                    console.log("Notification emitted to doctor:", doctor._id);
+                    index_1.io.to(patientSocketId).emit("appointmentReminder", {
+                        message: patientNotificationMessage,
+                        bookingDetails: booking,
+                    });
+                    console.log("Notification emitted to patient:", patient._id);
+                }
+                return booking;
             }
             catch (err) {
                 console.error("Error in postbookings:", err);
@@ -143,7 +179,8 @@ class PatientRepository {
             console.log('entered my bookings repo');
             try {
                 return bookingModel_1.default.find({ patientId: patientId })
-                    .populate({ path: 'doctorId', populate: {
+                    .populate({
+                    path: 'doctorId', populate: {
                         path: 'expertise'
                     },
                 })
@@ -154,6 +191,28 @@ class PatientRepository {
             }
         });
     }
+    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
+    //     console.log('Entered my bookings repository');
+    //     try {
+    //         const skip = (page - 1) * limit;
+    //         // Fetch paginated bookings
+    //         const bookings = await Booking.find({ patientId: patientId })
+    //             .populate({
+    //                 path: 'doctorId',
+    //                 populate: {
+    //                     path: 'expertise',
+    //                 },
+    //             })
+    //             .sort({ updatedAt: -1 })
+    //             .skip(skip) // Skip records for pagination
+    //             .limit(limit); // Limit the number of records
+    //         // Count total records
+    //         const totalCount = await Booking.countDocuments({ patientId: patientId });
+    //         return { data: bookings, totalCount };
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
     cancelBooking(bookingId) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -213,6 +272,85 @@ class PatientRepository {
             try {
                 const bannerData = yield bannerModel_1.default.find({ status: true }).sort({ createdAt: -1 });
                 return bannerData;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    addFavouriteDoctor(patientId, doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                const patient = yield userModel_1.default.findById(patientId);
+                if (!patient) {
+                    throw new Error('patient not found');
+                }
+                patient.favourite_doctors = patient.favourite_doctors || [];
+                const doctorObjectId = new mongoose_1.default.Types.ObjectId(doctorId);
+                const isFavourite = (_a = patient.favourite_doctors) === null || _a === void 0 ? void 0 : _a.some((doctor) => doctor.equals(doctorObjectId));
+                if (isFavourite) {
+                    patient.favourite_doctors = patient.favourite_doctors.filter((favDoctorId) => !favDoctorId.equals(doctorObjectId));
+                    yield patient.save();
+                    return 'doctor removed from favourites';
+                }
+                else {
+                    patient.favourite_doctors.push(doctorObjectId);
+                    yield patient.save();
+                    return 'doctor added to favourites';
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getFavouriteDoctors(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const patient = yield userModel_1.default.findById(patientId).populate('favourite_doctors');
+                if (!patient) {
+                    throw new Error('patient not found');
+                }
+                return patient.favourite_doctors || null;
+            }
+            catch (error) {
+                console.error('Error in getFavouriteDoctors repository:', error);
+                throw error;
+            }
+        });
+    }
+    fetchAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield userModel_1.default.findOne({ is_admin: true });
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getNotification(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const notificationData = yield notificationModel_1.default.find({
+                    patientId,
+                    recipientType: "patient"
+                }).sort({ createdAt: -1 }).exec();
+                return notificationData;
+            }
+            catch (error) {
+                console.error("Error fetching notifications for doctor:", error);
+                throw error;
+            }
+        });
+    }
+    markAsRead(notificationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedNotification = yield notificationModel_1.default.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
+                console.log(updatedNotification);
+                return updatedNotification;
             }
             catch (error) {
                 throw error;

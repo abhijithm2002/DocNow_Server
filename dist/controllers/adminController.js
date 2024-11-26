@@ -82,6 +82,17 @@ class adminController {
             }
         });
     }
+    fetchDoctors(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const doctorData = yield this._adminService.fetchDoctors();
+                return res.status(200).json({ doctorData });
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
     verifyDocuments(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('entered verifyDocuments controller');
@@ -153,6 +164,44 @@ class adminController {
             }
             catch (error) {
                 throw error;
+            }
+        });
+    }
+    bookings(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const bookingData = yield this._adminService.bookings();
+                if (bookingData) {
+                    res.status(200).json({ message: 'fetched bookings successfull', bookings: bookingData });
+                }
+                else {
+                    res.status(400).json({ message: 'fetching bookings unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    bookingList(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { page, date } = req.query;
+                const bookingData = yield this._adminService.bookingList(page, date);
+                if (bookingData) {
+                    res.status(200).json({
+                        message: 'fetching booking list successfull',
+                        bookings: bookingData.bookings,
+                        totalPages: bookingData.totalPages,
+                        totalBookings: bookingData.totalBookings
+                    });
+                }
+                else {
+                    res.status(400).json({ message: 'fetching booking list unsuccessfull' });
+                }
+            }
+            catch (error) {
+                return res.status(500).json({ message: "Internal Error" });
             }
         });
     }

@@ -30,4 +30,11 @@ router.get('/myBookings', authMiddleware_2.default, PatientController.myBookings
 router.patch('/cancelBooking/:bookingId', authMiddleware_2.default, PatientController.cancelBooking.bind(PatientController));
 router.get('/walletHistory/:patientId', authMiddleware_2.default, PatientController.getWalletHistory.bind(PatientController));
 router.get('/getBanner', PatientController.getBanner.bind(PatientController));
+router.patch('/addToFavourites', PatientController.addFavouriteDoctor.bind(PatientController));
+router.get('/getFavouriteDoctors/:patientId', PatientController.getFavouriteDoctors.bind(PatientController));
+router.get('/fetchDoctorList', authMiddleware_2.default, PatientController.fetchDoctorList.bind(PatientController));
+router.post('/postRating', authMiddleware_2.default, PatientController.postRating.bind(PatientController));
+router.get('/fetchAdmin', PatientController.fetchAdmin.bind(PatientController));
+router.get('/getNotification/:patientId', authMiddleware_2.default, PatientController.getNotification.bind(PatientController));
+router.patch('/markAsRead/:notificationId/read', authMiddleware_2.default, PatientController.markAsRead.bind(PatientController));
 exports.patientRoutes = router;

@@ -48,5 +48,11 @@ router.patch('/deleteSlots', authDoctor_1.default, DoctorController.deleteSlots.
 router.get('/getDocuments', authDoctor_1.default, DoctorController.fetchDocuments.bind(DoctorController));
 router.get('/fetchAppointments/:doctorId', authDoctor_1.default, DoctorController.fetchAppointments.bind(DoctorController));
 router.get('/wallet-history/:doctorId', authDoctor_1.default, DoctorController.getWalletHistory.bind(DoctorController));
+router.patch('/updateBooking', authDoctor_1.default, DoctorController.updateBooking.bind(DoctorController));
+router.post('/postPrescription', authDoctor_1.default, DoctorController.postPrescriptions.bind(DoctorController));
+router.get('/drAppointments', authDoctor_1.default, DoctorController.drAppointments.bind(DoctorController));
+router.get('/getNotification/:doctorId', authDoctor_1.default, DoctorController.getNotification.bind(DoctorController));
+router.patch('/markAsRead/:notificationId/read', authDoctor_1.default, DoctorController.markAsRead.bind(DoctorController));
+router.get('/fetchAdmin', DoctorController.fetchAdmin.bind(DoctorController));
 router.post('/refresh-token', authDoctor_1.refreshAccessTokenDoctor);
 exports.doctorRoutes = router;

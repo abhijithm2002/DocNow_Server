@@ -57,7 +57,8 @@ const doctorSchema = new mongoose_1.Schema({
         address: { type: String },
         pincode: { type: Number },
         state: { type: String },
-        country: { type: String }
+        country: { type: String },
+        district: { type: String }
     },
     photo: { type: String, default: '' },
     Wallet: { type: Number, default: 0 },

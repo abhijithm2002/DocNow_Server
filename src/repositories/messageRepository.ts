@@ -9,7 +9,7 @@ import { getReceiverSocketId } from "../Socket/socket";
 import {io} from '../index'
 
 export default class MessageRepository implements ImessageRepository {
-  async sendMessage(id: string, senderId: string, message: string, messageType: string): Promise<IMessage | null> {
+  async sendMessage(id: string, senderId: string, message: string, messageType: string, senderName: string): Promise<IMessage | null> {
     console.log('entered sendmessage repo');
     
     try {
@@ -18,7 +18,8 @@ export default class MessageRepository implements ImessageRepository {
             senderId,
             recieverId: receiverId,
             messageType,
-            message
+            message,
+            senderName
         });
 
         let conversation = await Conversation.findOne({
@@ -45,7 +46,8 @@ export default class MessageRepository implements ImessageRepository {
             senderId: newMessage.senderId,
             unreadCount: 0,
             message: newMessage.message,
-            createdAt: newMessage.createdAt
+            createdAt: newMessage.createdAt,
+            senderName: newMessage.senderName
         });
 
         return newMessage;

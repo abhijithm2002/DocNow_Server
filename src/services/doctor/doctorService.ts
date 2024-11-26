@@ -4,6 +4,7 @@ import doctorRepository from "../../repositories/doctorRepository";
 import Slots, { ISlot } from "../../models/slotModel";
 import { IBooking } from "../../models/bookingModel";
 import { INotifications } from "../../models/notificationModel";
+import { Patient } from "../../models/userModel";
 
 export default class doctorService implements IdoctorService {
     private _doctorRepository: doctorRepository;
@@ -20,33 +21,16 @@ export default class doctorService implements IdoctorService {
     }
 
     async editDoctor(doctorData: Partial<Doctor>): Promise<Doctor | null> {
-        console.log('entered the editDoctor service')
         try {
-            const updatedData = await this._doctorRepository.editSingleDoctor(doctorData)
-            console.log('updated data', updatedData)
-
-            if (updatedData) {
-                updatedData.name = doctorData.name ?? updatedData.name
-                updatedData.email = doctorData.email ?? updatedData.email
-                updatedData.mobile = doctorData.mobile ?? updatedData.mobile
-                updatedData.photo = doctorData.photo ?? updatedData.photo
-                updatedData.gender = doctorData.gender ?? updatedData.gender
-                updatedData.bio = doctorData.bio ?? updatedData.bio
-                updatedData.expertise = doctorData.expertise ?? updatedData.expertise
-                updatedData.bookingfees = doctorData.bookingfees ?? updatedData.bookingfees
-                updatedData.currentWorkingHospital = doctorData.currentWorkingHospital ?? updatedData.currentWorkingHospital
-                updatedData.experienceYears = doctorData.experienceYears ?? updatedData.experienceYears
-                updatedData.medicalLicenseNo = doctorData.medicalLicenseNo ?? updatedData.medicalLicenseNo
-                updatedData.education = doctorData.education ?? updatedData.education
-                await updatedData.save();
-                return updatedData
-            } else {
-                return null
-            }
+            const updatedDoctor = await this._doctorRepository.editSingleDoctor(doctorData);
+            return updatedDoctor || null;
         } catch (error) {
-            throw error
+            console.error('Error in editDoctor service:', error);
+            throw error;
         }
     }
+    
+    
 
 
     async uploadDocuments(doctorData: Partial<Doctor>): Promise<Doctor | null> {
@@ -247,6 +231,14 @@ export default class doctorService implements IdoctorService {
     async markAsRead(notificationId: string): Promise<INotifications | null> {
         try {
             return await this._doctorRepository.markAsRead(notificationId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fetchAdmin(): Promise<Patient | null> {
+        try {
+            return await this._doctorRepository.fetchAdmin();
         } catch (error) {
             throw error
         }

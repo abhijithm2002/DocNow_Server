@@ -6,6 +6,7 @@ export interface IMessage extends Document {
     messageType: 'text' | 'voice' | 'image',
     message: string,
     createdAt?: string
+    senderName?: string
 }
 
 const messageSchema: Schema<IMessage> = new Schema({
@@ -25,6 +26,10 @@ const messageSchema: Schema<IMessage> = new Schema({
         required: true
     },
     message : {
+        type: String,
+        required: true
+    },
+    senderName: {
         type: String,
         required: true
     }

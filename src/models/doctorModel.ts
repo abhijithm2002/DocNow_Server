@@ -14,6 +14,7 @@ export interface Notification {
 export interface Address {
     address : string;
     pincode : number;
+    district: string;
     state : string;
     country : string;
 }
@@ -88,9 +89,10 @@ const doctorSchema = new Schema<Doctor>({
         address: {type: String},
         pincode: {type: Number},
         state: {type: String},
-        country: {type: String}
+        country: {type: String},
+        district: {type: String}
     },
-
+    
     photo: { type: String,default:'' },
 
     Wallet : { type: Number, default: 0},

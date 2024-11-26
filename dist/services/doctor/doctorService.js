@@ -30,32 +30,12 @@ class doctorService {
     }
     editDoctor(doctorData) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-            console.log('entered the editDoctor service');
             try {
-                const updatedData = yield this._doctorRepository.editSingleDoctor(doctorData);
-                console.log('updated data', updatedData);
-                if (updatedData) {
-                    updatedData.name = (_a = doctorData.name) !== null && _a !== void 0 ? _a : updatedData.name;
-                    updatedData.email = (_b = doctorData.email) !== null && _b !== void 0 ? _b : updatedData.email;
-                    updatedData.mobile = (_c = doctorData.mobile) !== null && _c !== void 0 ? _c : updatedData.mobile;
-                    updatedData.photo = (_d = doctorData.photo) !== null && _d !== void 0 ? _d : updatedData.photo;
-                    updatedData.gender = (_e = doctorData.gender) !== null && _e !== void 0 ? _e : updatedData.gender;
-                    updatedData.bio = (_f = doctorData.bio) !== null && _f !== void 0 ? _f : updatedData.bio;
-                    updatedData.expertise = (_g = doctorData.expertise) !== null && _g !== void 0 ? _g : updatedData.expertise;
-                    updatedData.bookingfees = (_h = doctorData.bookingfees) !== null && _h !== void 0 ? _h : updatedData.bookingfees;
-                    updatedData.currentWorkingHospital = (_j = doctorData.currentWorkingHospital) !== null && _j !== void 0 ? _j : updatedData.currentWorkingHospital;
-                    updatedData.experienceYears = (_k = doctorData.experienceYears) !== null && _k !== void 0 ? _k : updatedData.experienceYears;
-                    updatedData.medicalLicenseNo = (_l = doctorData.medicalLicenseNo) !== null && _l !== void 0 ? _l : updatedData.medicalLicenseNo;
-                    updatedData.education = (_m = doctorData.education) !== null && _m !== void 0 ? _m : updatedData.education;
-                    yield updatedData.save();
-                    return updatedData;
-                }
-                else {
-                    return null;
-                }
+                const updatedDoctor = yield this._doctorRepository.editSingleDoctor(doctorData);
+                return updatedDoctor || null;
             }
             catch (error) {
+                console.error('Error in editDoctor service:', error);
                 throw error;
             }
         });
@@ -194,6 +174,84 @@ class doctorService {
             console.log('fetch wallt history service');
             try {
                 return yield this._doctorRepository.getWalletHistory(doctorId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    updateBooking(bookingId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const appointmentData = yield this._doctorRepository.updateBooking(bookingId);
+                console.log("appointmentData", appointmentData);
+                if (appointmentData) {
+                    appointmentData.status = "Completed";
+                    yield (appointmentData === null || appointmentData === void 0 ? void 0 : appointmentData.save());
+                    return appointmentData;
+                }
+                else {
+                    return null;
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    postPrescription(id, prescriptions) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const prescriptionData = yield this._doctorRepository.updateBooking(id);
+                if (prescriptionData) {
+                    if (!Array.isArray(prescriptionData.prescription)) {
+                        prescriptionData.prescription = [];
+                    }
+                    prescriptionData.prescription.push(...prescriptions);
+                    yield prescriptionData.save();
+                }
+                return prescriptionData;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    appointments(date, doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered appointments service');
+            try {
+                return yield this._doctorRepository.appointments(date, doctorId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getNotification(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._doctorRepository.getNotification(doctorId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    markAsRead(notificationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._doctorRepository.markAsRead(notificationId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._doctorRepository.fetchAdmin();
             }
             catch (error) {
                 throw error;

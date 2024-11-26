@@ -23,7 +23,8 @@ class messageController {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('entered sendmessage');
             try {
-                const { message } = req.body;
+                const { message, senderName } = req.body;
+                console.log('sendername .....', senderName);
                 const { id, senderId } = req.params;
                 console.log("message", message);
                 console.log("id", id);
@@ -40,7 +41,7 @@ class messageController {
                     const imagePath = path_1.default.join(__dirname, "../public/images", files.image[0].filename);
                     messageContent = yield (0, cloudinary_1.uploadImageToCloudinary)(imagePath);
                 }
-                const data = yield this._messageService.sendMessage(id, senderId, messageContent, messageType);
+                const data = yield this._messageService.sendMessage(id, senderId, messageContent, messageType, senderName);
                 return res.status(200).json({ newMessage: data });
             }
             catch (error) {
@@ -52,12 +53,41 @@ class messageController {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('entered get conversation controller');
             try {
-                const { id } = req.query;
-                let conversation = yield this._messageService.getConversationByParticipant(id);
-                return res.json({ conversation });
+                const { id, action } = req.query;
+                console.log('id', id, action);
+                let conversation;
+                if (action === "fetchDoctorForUsers") {
+                    conversation = yield this._messageService.conversationPatients(id);
+                    console.log('conversaiton', conversation);
+                    return res.json({ conversation });
+                }
+                else if (action === "fetchUsersForDoctors") {
+                    conversation = yield this._messageService.conversationDoctors(id);
+                    console.log('conversation', conversation);
+                    return res.json({ conversation });
+                }
             }
             catch (error) {
                 res.status(500).json({ message: 'internal Error' });
+            }
+        });
+    }
+    getMessages(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id, senderId } = req.params;
+                console.log('chatid', id);
+                console.log('senderid', senderId);
+                const conversation = yield this._messageService.getMessages(id, senderId);
+                if (conversation === null || conversation === void 0 ? void 0 : conversation.messages) {
+                    return res.status(200).json({ message: conversation.messages, lastMessage: conversation.lastMessage });
+                }
+                else {
+                    return res.status(200).json([]);
+                }
+            }
+            catch (error) {
+                return res.status(500).json({ message: 'Internal Error' });
             }
         });
     }

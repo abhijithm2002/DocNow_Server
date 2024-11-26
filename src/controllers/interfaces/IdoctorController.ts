@@ -15,4 +15,6 @@ export interface IdoctorController {
     drAppointments(req: Request, res: Response, next: NextFunction): void;
     getNotification(req: Request, res: Response, next: NextFunction): void;
     markAsRead(req: Request, res: Response, next: NextFunction): void;
+    fetchAdmin(req: Request, res: Response, next: NextFunction): void;  
+
 }

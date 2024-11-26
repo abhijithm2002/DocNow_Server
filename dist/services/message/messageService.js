@@ -17,20 +17,42 @@ class messageService {
     constructor() {
         this._messageRepository = new messageRepository_1.default();
     }
-    sendMessage(id, senderId, message, messageType) {
+    sendMessage(id, senderId, message, messageType, senderName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this._messageRepository.sendMessage(id, senderId, message, messageType);
+                return yield this._messageRepository.sendMessage(id, senderId, message, messageType, senderName);
             }
             catch (error) {
                 throw error;
             }
         });
     }
-    getConversationByParticipant(id) {
+    conversationDoctors(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('doctor conversion service');
+            try {
+                return yield this._messageRepository.conversationDoctors(id);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    conversationPatients(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('patient conversion service');
+            try {
+                return yield this._messageRepository.conversationPatients(id);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getMessages(id, senderId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this._messageRepository.getConversationByParticipant(id);
+                return yield this._messageRepository.getMessages(id, senderId);
             }
             catch (error) {
                 throw error;

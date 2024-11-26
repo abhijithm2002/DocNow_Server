@@ -317,14 +317,45 @@ export default class patientController implements IpatientController {
   }
 
 
+  // async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const doctorData = await this._patientService.fetchDoctorList()
+  //     return res.status(200).json({ doctorData })
+  //   } catch (error) {
+  //     return res.status(500).json({ message: 'Internal Server Error' });
+  //   }
+  // }
+
   async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
     try {
-      const doctorData = await this._patientService.fetchDoctorList()
-      return res.status(200).json({ doctorData })
+        const { page = 1, limit = 10, search = '', specialization = ''} = req.query;
+
+        const { doctors, total } = await this._patientService.fetchDoctorList({
+            page: Number(page),
+            limit: Number(limit),
+            search: String(search),
+            specialization: String(specialization),
+            
+        });
+
+        const totalPages = Math.ceil(total / Number(limit));
+
+        return res.status(200).json({
+            doctorData: {
+                doctors,
+                total,
+                currentPage: Number(page),
+                totalPages,
+            },
+        });
     } catch (error) {
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error fetching doctor list:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-  }
+}
+
+
+
 
   async postRating(req: Request, res: Response, next: NextFunction) {
     try {

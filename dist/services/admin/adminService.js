@@ -77,7 +77,17 @@ class adminService {
     fetchDoctorList() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this._doctorRepository.doctorFetch();
+                return yield this._adminRepository.fetchDoctor();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchDoctors() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._adminRepository.fetchDoctors();
             }
             catch (error) {
                 throw error;
@@ -137,6 +147,26 @@ class adminService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield this._adminRepository.fetchBanners();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    bookings() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._adminRepository.bookings();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    bookingList(page, date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._adminRepository.bookingList(page, date);
             }
             catch (error) {
                 throw error;

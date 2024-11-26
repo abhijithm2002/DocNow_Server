@@ -3,6 +3,7 @@ import { IdoctorRepository } from "./interfaces/IdoctorRepository";
 import Slots, { ISlot } from "../models/slotModel";
 import Booking, { IBooking } from "../models/bookingModel";
 import   Notification, { INotifications } from "../models/notificationModel";
+import Patients, { Patient } from "../models/userModel";
 
 export default class doctorRepository implements IdoctorRepository {
     async signupDoctor(userData: Partial<Doctor>): Promise<Doctor | null> {
@@ -19,13 +20,54 @@ export default class doctorRepository implements IdoctorRepository {
         }
     }
 
-    async doctorFetch(): Promise<Doctor[] | null> {
+    
+    async doctorFetch({
+        page,
+        limit,
+        search,
+        specialization,
+        
+    }: {
+        page: number;
+        limit: number;
+        search: string;
+        specialization: string;
+        
+    }): Promise<{ doctors: Doctor[]; total: number }> {
         try {
-            return await Doctors.find().select('-password')
+            const skip = (page - 1) * limit;
+    
+            const query: any = {
+                documents_verified: true,
+                is_blocked: false,
+            };
+    
+            if (search) {
+                query.$or = [
+                    { name: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } },
+                    { expertise: { $regex: search, $options: 'i' } },
+                ];
+            }
+    
+            if (specialization) {
+                query.expertise = specialization;
+            }
+    
+            
+    
+            const [doctors, total] = await Promise.all([
+                Doctors.find(query).select('-password').skip(skip).limit(limit),
+                Doctors.countDocuments(query),
+            ]);
+    
+            return { doctors, total };
         } catch (error) {
-            throw error
+            throw error;
         }
     }
+    
+    
 
     async fetchDoctor(id: string): Promise<Doctor | null> {
         try {
@@ -36,13 +78,21 @@ export default class doctorRepository implements IdoctorRepository {
     }
 
     async editSingleDoctor(doctorData: Partial<Doctor>): Promise<Doctor | null> {
-        console.log('entered repository of editsingledoctor', doctorData.email)
         try {
-            return await Doctors.findOne({ email: doctorData.email }).exec()
+            const updatedDoctor = await Doctors.findOneAndUpdate(
+                { email: doctorData.email },
+                { $set: doctorData }, 
+                { new: true }
+            ).exec();
+    
+            return updatedDoctor;
         } catch (error) {
-            throw error
+            console.error('Error in editSingleDoctor:', error);
+            throw error;
         }
     }
+    
+    
 
     async insertSlots(slotsData: ISlot[]): Promise<ISlot[] | null> {
         try {
@@ -193,6 +243,16 @@ export default class doctorRepository implements IdoctorRepository {
             )
             console.log(updatedNotification)
             return updatedNotification
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    
+    async fetchAdmin(): Promise<Patient | null> {
+        try {
+            return await Patients.findOne({ is_admin: true })
         } catch (error) {
             throw error
         }

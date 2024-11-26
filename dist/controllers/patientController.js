@@ -213,6 +213,37 @@ class patientController {
             }
         });
     }
+    //   async myBookings(req: Request, res: Response, next: NextFunction) {
+    //     console.log('Entered my bookings controller');
+    //     try {
+    //       const {patientId} = req.params;
+    //         const {  page = '1', limit = '10' } = req.query;
+    //       console.log('patientid',patientId)
+    //       console.log('page',page)
+    //       console.log('limit',limit)
+    //         const pageNumber = parseInt(page as string, 10);
+    //         const limitNumber = parseInt(limit as string, 10);
+    //         const { data, totalCount } = await this._patientService.myBookings(
+    //             patientId as string,
+    //             pageNumber,
+    //             limitNumber
+    //         );
+    //         if (data) {
+    //             return res.status(200).json({
+    //                 message: 'My bookings fetched successfully',
+    //                 data,
+    //                 totalCount,
+    //                 totalPages: Math.ceil(totalCount / limitNumber),
+    //                 currentPage: pageNumber,
+    //             });
+    //         } else {
+    //             return res.status(400).json({ message: 'No bookings found' });
+    //         }
+    //     } catch (error) {
+    //         console.error('Error in fetch my bookings:', error);
+    //         res.status(500).json({ message: 'Internal Server Error' });
+    //     }
+    // }
     cancelBooking(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('entered cancel booking controller');
@@ -266,6 +297,153 @@ class patientController {
             catch (error) {
                 console.error('Error in fetching banner:', error);
                 res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    addFavouriteDoctor(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { patientId, doctorId } = req.body;
+                console.log(patientId);
+                console.log(doctorId);
+                const message = yield this._patientService.addFavouriteDoctor(patientId, doctorId);
+                return res.status(200).json({ message });
+            }
+            catch (error) {
+                res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    getFavouriteDoctors(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { patientId } = req.params;
+                console.log('idddd', patientId);
+                const favouriteDoctors = yield this._patientService.getFavouriteDoctors(patientId);
+                if (!favouriteDoctors) {
+                    return res.status(404).json({ message: 'No favorite doctors found' });
+                }
+                console.log('favourite', favouriteDoctors);
+                return res.status(200).json(favouriteDoctors);
+            }
+            catch (error) {
+                console.error('Error fetching favourite doctors:', error);
+                return res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    // async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
+    //   try {
+    //     const doctorData = await this._patientService.fetchDoctorList()
+    //     return res.status(200).json({ doctorData })
+    //   } catch (error) {
+    //     return res.status(500).json({ message: 'Internal Server Error' });
+    //   }
+    // }
+    fetchDoctorList(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { page = 1, limit = 10, search = '', specialization = '' } = req.query;
+                const { doctors, total } = yield this._patientService.fetchDoctorList({
+                    page: Number(page),
+                    limit: Number(limit),
+                    search: String(search),
+                    specialization: String(specialization),
+                });
+                const totalPages = Math.ceil(total / Number(limit));
+                return res.status(200).json({
+                    doctorData: {
+                        doctors,
+                        total,
+                        currentPage: Number(page),
+                        totalPages,
+                    },
+                });
+            }
+            catch (error) {
+                console.error('Error fetching doctor list:', error);
+                return res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+    }
+    postRating(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { patientId, doctorId, rating } = req.body;
+                const ratingData = yield this._patientService.postRating(patientId, doctorId, rating);
+                if (ratingData) {
+                    res.status(200).json({ message: 'Rating sumbitted' });
+                }
+                else {
+                    res.status(400).json({ message: 'Rating not sumbitted' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    fetchAdmin(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const adminData = yield this._patientService.fetchAdmin();
+                if (adminData) {
+                    res.status(200).json({ message: 'fetched Admin details', data: adminData });
+                }
+                else {
+                    res.status(400).json({ message: 'fetch admin details unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        });
+    }
+    getNotification(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const patientId = req.params.patientId;
+                if (patientId) {
+                    const notificationData = yield this._patientService.getNotification(patientId);
+                    if (notificationData) {
+                        res.status(200).json({ message: 'fetched user notification successfully', data: notificationData });
+                    }
+                    else {
+                        res.status(400).json({ message: 'fetching notification unsuccessfull' });
+                    }
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
+    markAsRead(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { notificationId } = req.params;
+                console.log('notification id', notificationId);
+                const updatedNotification = yield this._patientService.markAsRead(notificationId);
+                if (updatedNotification) {
+                    return res.status(200).json({
+                        success: true,
+                        message: "Notification marked as read",
+                        data: updatedNotification,
+                    });
+                }
+                else {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Notification not found",
+                    });
+                }
+            }
+            catch (error) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to update notification",
+                    error: error
+                });
             }
         });
     }

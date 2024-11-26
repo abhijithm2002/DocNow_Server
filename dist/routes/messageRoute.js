@@ -16,4 +16,5 @@ router.post('/send/:id/:senderId', upload.fields([
     { name: 'image', maxCount: 1 },
 ]), MessageController.sendMessage.bind(MessageController));
 router.get('/conversations', MessageController.getConversations.bind(MessageController));
+router.post('/:id/:senderId', MessageController.getMessages.bind(MessageController));
 exports.messageRoutes = router;

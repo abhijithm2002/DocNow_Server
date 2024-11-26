@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const patientRepository_1 = __importDefault(require("../../repositories/patientRepository"));
 const doctorRepository_1 = __importDefault(require("../../repositories/doctorRepository"));
+const mongoose_1 = __importDefault(require("mongoose"));
 class patientService {
     constructor() {
         this._patientRepository = new patientRepository_1.default();
@@ -99,6 +100,14 @@ class patientService {
             }
         });
     }
+    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
+    //     console.log('Entered my bookings service');
+    //     try {
+    //         return await this._patientRepository.myBookings(patientId, page, limit);
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
     cancelBooking(bookingId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -123,6 +132,114 @@ class patientService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield this._patientRepository.getBanner();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    addFavouriteDoctor(patientId, doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const message = yield this._patientRepository.addFavouriteDoctor(patientId, doctorId);
+                return message;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getFavouriteDoctors(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.getFavouriteDoctors(patientId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    // async fetchDoctorList(): Promise<Doctor[] | null> {
+    //     try {
+    //         return await this._doctorRespository.doctorFetch()
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // }
+    fetchDoctorList(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, }) {
+            try {
+                return yield this._doctorRespository.doctorFetch({
+                    page,
+                    limit,
+                    search,
+                    specialization,
+                });
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    postRating(patientId, doctorId, rating) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const doctor = yield this._doctorRespository.fetchDoctor(doctorId);
+                if (doctor) {
+                    if (!(doctor === null || doctor === void 0 ? void 0 : doctor.review)) {
+                        doctor.review = [];
+                    }
+                    const patientObjectId = new mongoose_1.default.Types.ObjectId(patientId);
+                    const existingReviewIndex = doctor === null || doctor === void 0 ? void 0 : doctor.review.findIndex((review) => review.patientId.toString() === patientObjectId.toString());
+                    if (existingReviewIndex > -1) {
+                        doctor.review[existingReviewIndex].rating = rating;
+                    }
+                    else {
+                        const newRating = {
+                            patientId: patientObjectId,
+                            rating
+                        };
+                        doctor === null || doctor === void 0 ? void 0 : doctor.review.push(newRating);
+                    }
+                    const totalRating = doctor === null || doctor === void 0 ? void 0 : doctor.review.reduce((acc, item) => acc + item.rating, 0);
+                    const averageRating = totalRating / (doctor === null || doctor === void 0 ? void 0 : doctor.review.length);
+                    doctor.rating = averageRating;
+                    yield (doctor === null || doctor === void 0 ? void 0 : doctor.save());
+                    return doctor;
+                }
+                else {
+                    return null;
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.fetchAdmin();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    getNotification(patientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.getNotification(patientId);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    markAsRead(notificationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.markAsRead(notificationId);
             }
             catch (error) {
                 throw error;

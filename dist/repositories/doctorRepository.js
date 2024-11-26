@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const slotModel_1 = __importDefault(require("../models/slotModel"));
 const bookingModel_1 = __importDefault(require("../models/bookingModel"));
+const notificationModel_1 = __importDefault(require("../models/notificationModel"));
+const userModel_1 = __importDefault(require("../models/userModel"));
 class doctorRepository {
     signupDoctor(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32,10 +34,29 @@ class doctorRepository {
             }
         });
     }
-    doctorFetch() {
-        return __awaiter(this, void 0, void 0, function* () {
+    doctorFetch(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, }) {
             try {
-                return yield doctorModel_1.default.find().select('-password');
+                const skip = (page - 1) * limit;
+                const query = {
+                    documents_verified: true,
+                    is_blocked: false,
+                };
+                if (search) {
+                    query.$or = [
+                        { name: { $regex: search, $options: 'i' } },
+                        { email: { $regex: search, $options: 'i' } },
+                        { expertise: { $regex: search, $options: 'i' } },
+                    ];
+                }
+                if (specialization) {
+                    query.expertise = specialization;
+                }
+                const [doctors, total] = yield Promise.all([
+                    doctorModel_1.default.find(query).select('-password').skip(skip).limit(limit),
+                    doctorModel_1.default.countDocuments(query),
+                ]);
+                return { doctors, total };
             }
             catch (error) {
                 throw error;
@@ -54,11 +75,12 @@ class doctorRepository {
     }
     editSingleDoctor(doctorData) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered repository of editsingledoctor', doctorData.email);
             try {
-                return yield doctorModel_1.default.findOne({ email: doctorData.email }).exec();
+                const updatedDoctor = yield doctorModel_1.default.findOneAndUpdate({ email: doctorData.email }, { $set: doctorData }, { new: true }).exec();
+                return updatedDoctor;
             }
             catch (error) {
+                console.error('Error in editSingleDoctor:', error);
                 throw error;
             }
         });
@@ -139,7 +161,7 @@ class doctorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('entered fetchAppointments repo');
             try {
-                const AppointmentData = yield bookingModel_1.default.find({ doctorId }).populate('patientId', 'name').sort({ date: -1 });
+                const AppointmentData = yield bookingModel_1.default.find({ doctorId }).populate('patientId').sort({ date: -1 });
                 console.log('fetched  appointment data', AppointmentData);
                 return AppointmentData;
             }
@@ -155,6 +177,72 @@ class doctorRepository {
                 const walletData = yield doctorModel_1.default.findById(doctorId).select('WalletHistory Wallet').sort({ date: -1 });
                 console.log(walletData);
                 return walletData;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    updateBooking(bookingId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield bookingModel_1.default.findById(bookingId).exec();
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    appointments(date, doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('entered appointment repository');
+            try {
+                console.log('doctorid and date', doctorId, date);
+                const inputDate = new Date(date);
+                const isoDateString = inputDate.toISOString().split("T")[0];
+                console.log("inputdate", inputDate);
+                console.log("isodatestring", isoDateString);
+                return yield bookingModel_1.default.find({
+                    date: isoDateString,
+                    doctorId: doctorId,
+                }).populate({ path: "patientId" });
+            }
+            catch (err) {
+                throw err;
+            }
+        });
+    }
+    getNotification(doctorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const notificationData = yield notificationModel_1.default.find({
+                    doctorId,
+                    recipientType: "doctor"
+                }).sort({ createdAt: -1 }).exec();
+                return notificationData;
+            }
+            catch (error) {
+                console.error("Error fetching notifications for doctor:", error);
+                throw error;
+            }
+        });
+    }
+    markAsRead(notificationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedNotification = yield notificationModel_1.default.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
+                console.log(updatedNotification);
+                return updatedNotification;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    fetchAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield userModel_1.default.findOne({ is_admin: true });
             }
             catch (error) {
                 throw error;

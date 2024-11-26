@@ -2,6 +2,7 @@ import { Doctor } from "../../../models/doctorModel";
 import { ISlot } from '../../../models/slotModel';
 import { IBooking } from "../../../models/bookingModel";
 import { INotifications } from "../../../models/notificationModel";
+import { Patient } from "../../../models/userModel";
 
 
 export interface IdoctorService {
@@ -19,5 +20,7 @@ export interface IdoctorService {
     appointments(date:string,doctorId:string):Promise<IBooking[]|null>
     getNotification(doctorId:string):Promise<INotifications[] |null>
     markAsRead(notificationId:string):Promise<INotifications |null>
+    fetchAdmin():Promise<Patient | null> 
+
 
 }

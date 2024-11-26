@@ -22,13 +22,15 @@ export const getReceiverSocketId = (receiverId: string): string | undefined => {
 };
 
 export const initializeSocket = (server: HttpServer) => {
-  const io = new Server(server, {
-    cors: {
-      origin: 'http://localhost:5173', 
-      methods: ["GET", "POST"],
-      credentials: true, 
-    },
-  });
+    const io = new Server(server, {
+      cors: {
+        origin: 'http://localhost:5173', 
+        methods: ["GET", "POST"],
+        credentials: true, 
+      },
+    });
+  
+  
 
   io.on("connection", (socket: Socket) => {
     console.log('socket connected');
@@ -64,7 +66,7 @@ export const initializeSocket = (server: HttpServer) => {
   
 
     // Handle new message
-    socket.on("sendnewMessage", ({ to, from,message }: { to: string; from: string , message: string}) => {
+    socket.on("sendnewMessage", ({ to, from,message, senderName }: { to: string; from: string , message: string, senderName: string}) => {
       if (!unreadMessages[to]) {
         unreadMessages[to] = {};
       }
@@ -129,4 +131,5 @@ export const initializeSocket = (server: HttpServer) => {
   });
 
   return io;
+
 };

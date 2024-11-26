@@ -29,6 +29,7 @@ router.post('/postPrescription', protectdoctor,DoctorController.postPrescription
 router.get('/drAppointments', protectdoctor,DoctorController.drAppointments.bind(DoctorController))
 router.get('/getNotification/:doctorId', protectdoctor,DoctorController.getNotification.bind(DoctorController))
 router.patch('/markAsRead/:notificationId/read', protectdoctor,DoctorController.markAsRead.bind(DoctorController))
+router.get('/fetchAdmin',DoctorController.fetchAdmin.bind(DoctorController))
 router.post('/refresh-token', refreshAccessTokenDoctor)
 
 export const doctorRoutes = router;

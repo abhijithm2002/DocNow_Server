@@ -35,8 +35,6 @@ export default class doctorController implements IdoctorController {
     }
 
     async editDoctor(req: Request, res: Response, next: NextFunction) {
-        console.log('entering edit doctor controller');
-
         try {
             const {
                 name,
@@ -50,16 +48,41 @@ export default class doctorController implements IdoctorController {
                 experienceYears,
                 medicalLicenseNo,
                 photo,
-                education
-            } = req.body
-            const doctorData = {name, email, photo, mobile,gender,bio,expertise,bookingfees,currentWorkingHospital,experienceYears,medicalLicenseNo,education}
-            const  data = await this._doctorService.editDoctor(doctorData)
-            return res.status(200).json({message: " Doctor Profile Updated", data})
+                documents,
+                address, // Use the nested address object directly
+            } = req.body;
+            
+            const doctorData = {
+                name,
+                email,
+                mobile,
+                bio,
+                gender,
+                expertise,
+                bookingfees,
+                currentWorkingHospital,
+                experienceYears,
+                medicalLicenseNo,
+                photo,
+                documents,
+                address, // Keep it as an object
+            };
+            
+    
+            const updatedDoctor = await this._doctorService.editDoctor(doctorData);
+    
+            if (updatedDoctor) {
+                return res.status(200).json({ message: 'Doctor Profile Updated', data: updatedDoctor });
+            } else {
+                return res.status(404).json({ message: 'Doctor not found' });
+            }
         } catch (error) {
-            console.error('Error in editprofile:', error);
-            res.status(500).json({ message: 'Internal Server Error' });
+            console.error('Error in editDoctor controller:', error);
+            return res.status(500).json({ message: 'Internal Server Error' });
         }
     }
+    
+    
 
     async uploadDocuments(req: Request, res: Response, next: NextFunction) {
         console.log('entered uploadDocuments controller')
@@ -298,6 +321,20 @@ export default class doctorController implements IdoctorController {
               });
         }
     }
+
+    async fetchAdmin(req: Request, res: Response, next: NextFunction) {
+        try {
+          const adminData = await this._doctorService.fetchAdmin();
+          if (adminData) {
+            res.status(200).json({ message: 'fetched Admin details', data: adminData })
+          } else {
+            res.status(400).json({ message: 'fetch admin details unsuccessfull' })
+          }
+        } catch (error) {
+          res.status(500).json({ message: 'Internal server error' })
+    
+        }
+      }
 }
 
 

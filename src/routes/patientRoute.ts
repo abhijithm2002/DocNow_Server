@@ -32,7 +32,7 @@ router.patch('/addToFavourites', PatientController.addFavouriteDoctor.bind(Patie
 router.get('/getFavouriteDoctors/:patientId', PatientController.getFavouriteDoctors.bind(PatientController))
 router.get('/fetchDoctorList',protect, PatientController.fetchDoctorList.bind(PatientController))
 router.post('/postRating',protect, PatientController.postRating.bind(PatientController))
-router.get('/fetchAdmin',protect, PatientController.fetchAdmin.bind(PatientController))
+router.get('/fetchAdmin', PatientController.fetchAdmin.bind(PatientController))
 router.get('/getNotification/:patientId',protect, PatientController.getNotification.bind(PatientController))
 router.patch('/markAsRead/:notificationId/read',protect, PatientController.markAsRead.bind(PatientController))
 
