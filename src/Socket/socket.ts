@@ -24,7 +24,7 @@ export const getReceiverSocketId = (receiverId: string): string | undefined => {
 export const initializeSocket = (server: HttpServer) => {
     const io = new Server(server, {
       cors: {
-        origin: 'http://localhost:5173', 
+        origin: ['https://doc-now-client.vercel.app','http://localhost:5173'], 
         methods: ["GET", "POST"],
         credentials: true, 
       },
