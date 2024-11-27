@@ -21,7 +21,7 @@ const app = express();
 const server = createServer(app); // HTTP server setup
 
 const corsOptions = {
-  origin: 'http://localhost:5173', 
+  origin: ['https://doc-now-client.vercel.app','http://localhost:5173'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true,
 };
