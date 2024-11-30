@@ -25,7 +25,6 @@ export default class PatientRepository implements IpatientRepository {
             if (data) {
                 return null;
             }
-            console.log('about to create user')
             console.log(userData)
             return await Patients.create(userData);
         } catch (error) {
@@ -50,7 +49,6 @@ export default class PatientRepository implements IpatientRepository {
     }
 
     async editSinglePatient(userData: Partial<Patient>): Promise<Patient | null> {
-        console.log('Entered editSinglePatient repo ', userData.email);
         try {
             const response = await Patients.findOne({ email: userData.email }).exec()
             console.log('response', response)
@@ -62,13 +60,10 @@ export default class PatientRepository implements IpatientRepository {
 
 
     async postBooking(userData: Partial<IBooking>): Promise<IBooking | null> {
-        console.log('entered postBooking respository');
 
         try {
-            console.log('doctorId:', userData.doctorId);
             const isAvailable = await Booking.find()
             const doctor = await Doctors.findById(userData.doctorId);
-            console.log("Doctor found:", doctor);
 
             if (!doctor) throw new Error(`Doctor not found with ID: ${userData.doctorId}`);
 
@@ -139,18 +134,15 @@ export default class PatientRepository implements IpatientRepository {
                 message: doctorNotificationMessage,
                 bookingDetails: booking,
             });
-            console.log("Notification emitted to doctor:", doctor._id);
 
             io.to(patientSocketId as string).emit("appointmentReminder", {
                 message: patientNotificationMessage,
                 bookingDetails: booking,
             });
-            console.log("Notification emitted to patient:", patient._id);
         }
 
         return booking;
         } catch (err) {
-            console.error("Error in postbookings:", err);
             throw err;
         }
 
@@ -159,7 +151,6 @@ export default class PatientRepository implements IpatientRepository {
 
 
     async fetchBookings(id: string, date: string): Promise<IBooking[] | null> {
-        console.log('entered fetchBooking repo')
         try {
             return await Booking.find({ doctorId: id, date: date }).exec();
         } catch (error) {
@@ -168,7 +159,6 @@ export default class PatientRepository implements IpatientRepository {
     }
 
     async myBookings(patientId: string): Promise<IBooking[] | null> {
-        console.log('entered my bookings repo')
         try {
             return Booking.find({ patientId: patientId })
                 .populate({
@@ -184,35 +174,10 @@ export default class PatientRepository implements IpatientRepository {
         }
     }
 
-    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
-    //     console.log('Entered my bookings repository');
-    //     try {
-    //         const skip = (page - 1) * limit;
-
-    //         // Fetch paginated bookings
-    //         const bookings = await Booking.find({ patientId: patientId })
-    //             .populate({
-    //                 path: 'doctorId',
-    //                 populate: {
-    //                     path: 'expertise',
-    //                 },
-    //             })
-    //             .sort({ updatedAt: -1 })
-    //             .skip(skip) // Skip records for pagination
-    //             .limit(limit); // Limit the number of records
-
-    //         // Count total records
-    //         const totalCount = await Booking.countDocuments({ patientId: patientId });
-
-    //         return { data: bookings, totalCount };
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
+    
 
 
     async cancelBooking(bookingId: string): Promise<IBooking | null> {
-        console.log('entered cancel booking repo');
         try {
             const booking = await Booking.findOne({ _id: bookingId })
             if (!booking) {
@@ -256,7 +221,6 @@ export default class PatientRepository implements IpatientRepository {
     }
 
     async getWalletHistory(patientId: string): Promise<Patient | null> {
-        console.log('enterd repo wallet ');
         try {
             const walletData = await Patients.findById(patientId).select('Wallet WalletHistory').sort({ "WalletHistory.date": -1 })
             return walletData
@@ -307,7 +271,6 @@ export default class PatientRepository implements IpatientRepository {
 
             return patient.favourite_doctors || null;
         } catch (error) {
-            console.error('Error in getFavouriteDoctors repository:', error);
             throw error;
         }
     }
@@ -328,7 +291,6 @@ export default class PatientRepository implements IpatientRepository {
             }).sort({ createdAt: -1 }).exec();
             return notificationData;
         } catch (error) {
-            console.error("Error fetching notifications for doctor:", error);
             throw error;
         }
     }

@@ -25,8 +25,6 @@ class doctorRepository {
                 if (user) {
                     return null;
                 }
-                console.log('about to create doctor');
-                console.log(userData);
                 return yield doctorModel_1.default.create(userData);
             }
             catch (err) {
@@ -35,13 +33,16 @@ class doctorRepository {
         });
     }
     doctorFetch(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, }) {
+        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, minPrice, maxPrice, state, experienceYears, }) {
             try {
                 const skip = (page - 1) * limit;
                 const query = {
                     documents_verified: true,
                     is_blocked: false,
                 };
+                if (minPrice || maxPrice < Infinity) {
+                    query.bookingfees = { $gte: minPrice || 0, $lte: maxPrice || Infinity };
+                }
                 if (search) {
                     query.$or = [
                         { name: { $regex: search, $options: 'i' } },
@@ -49,9 +50,13 @@ class doctorRepository {
                         { expertise: { $regex: search, $options: 'i' } },
                     ];
                 }
-                if (specialization) {
+                if (specialization)
                     query.expertise = specialization;
-                }
+                if (state)
+                    query['address.state'] = { $regex: state, $options: 'i' };
+                if (experienceYears)
+                    query.experienceYears = { $gte: experienceYears };
+                // Fetch doctors and total count
                 const [doctors, total] = yield Promise.all([
                     doctorModel_1.default.find(query).select('-password').skip(skip).limit(limit),
                     doctorModel_1.default.countDocuments(query),
@@ -80,7 +85,6 @@ class doctorRepository {
                 return updatedDoctor;
             }
             catch (error) {
-                console.error('Error in editSingleDoctor:', error);
                 throw error;
             }
         });
@@ -88,23 +92,19 @@ class doctorRepository {
     insertSlots(slotsData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Inserting or Updating Slots Data:', slotsData);
                 const promises = slotsData.map(slot => {
                     return slotModel_1.default.findOneAndUpdate({ doctorId: slot.doctorId, date: slot.date }, { shifts: slot.shifts, createdAt: slot.createdAt }, { upsert: true, new: true });
                 });
                 const result = yield Promise.all(promises);
-                console.log('Inserted or Updated Slots:', result);
                 return result;
             }
             catch (error) {
-                console.error('Error in insertSlots:', error);
                 throw error;
             }
         });
     }
     fetchSlots(id, date) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered fetch slots repo');
             try {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
@@ -116,31 +116,25 @@ class doctorRepository {
                         $lt: endDate
                     }
                 }).exec();
-                console.log('slotsssss', slots);
                 return slots;
             }
             catch (error) {
-                console.error('Error fetching slots:', error);
                 throw new Error('Error fetching slots');
             }
         });
     }
     deleteSlots(slotId, selectedShifts) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered delete slots repo');
             try {
                 const slot = yield slotModel_1.default.findById(slotId);
                 if (!slot) {
-                    console.log('Slot not found');
                     return null;
                 }
                 slot.shifts = slot.shifts.filter(shift => !selectedShifts.includes(shift));
                 const updatedSlot = yield slot.save();
-                console.log('Updated slot after deletion:', updatedSlot);
                 return updatedSlot;
             }
             catch (error) {
-                console.error('Error in deleteSlots:', error);
                 throw error;
             }
         });
@@ -159,10 +153,8 @@ class doctorRepository {
     }
     fetchAppointments(doctorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered fetchAppointments repo');
             try {
                 const AppointmentData = yield bookingModel_1.default.find({ doctorId }).populate('patientId').sort({ date: -1 });
-                console.log('fetched  appointment data', AppointmentData);
                 return AppointmentData;
             }
             catch (error) {
@@ -172,7 +164,6 @@ class doctorRepository {
     }
     getWalletHistory(doctorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered wallet history repo');
             try {
                 const walletData = yield doctorModel_1.default.findById(doctorId).select('WalletHistory Wallet').sort({ date: -1 });
                 console.log(walletData);
@@ -195,9 +186,7 @@ class doctorRepository {
     }
     appointments(date, doctorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered appointment repository');
             try {
-                console.log('doctorid and date', doctorId, date);
                 const inputDate = new Date(date);
                 const isoDateString = inputDate.toISOString().split("T")[0];
                 console.log("inputdate", inputDate);
@@ -222,7 +211,6 @@ class doctorRepository {
                 return notificationData;
             }
             catch (error) {
-                console.error("Error fetching notifications for doctor:", error);
                 throw error;
             }
         });
@@ -231,7 +219,6 @@ class doctorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const updatedNotification = yield notificationModel_1.default.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
-                console.log(updatedNotification);
                 return updatedNotification;
             }
             catch (error) {

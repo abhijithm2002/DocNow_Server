@@ -167,13 +167,17 @@ class patientService {
     //     }
     // }
     fetchDoctorList(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, }) {
+        return __awaiter(this, arguments, void 0, function* ({ page, limit, search, specialization, minPrice, maxPrice, state, experienceYears, }) {
             try {
                 return yield this._doctorRespository.doctorFetch({
                     page,
                     limit,
                     search,
                     specialization,
+                    minPrice,
+                    maxPrice,
+                    state,
+                    experienceYears
                 });
             }
             catch (error) {

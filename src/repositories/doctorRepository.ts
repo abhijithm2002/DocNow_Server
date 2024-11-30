@@ -12,8 +12,6 @@ export default class doctorRepository implements IdoctorRepository {
             if (user) {
                 return null
             }
-            console.log('about to create doctor');
-            console.log(userData)
             return await Doctors.create(userData);
         } catch (err) {
             throw err
@@ -26,13 +24,19 @@ export default class doctorRepository implements IdoctorRepository {
         limit,
         search,
         specialization,
-        
+        minPrice,
+        maxPrice,
+        state,
+        experienceYears,
     }: {
         page: number;
         limit: number;
         search: string;
         specialization: string;
-        
+        minPrice: number;
+        maxPrice: number;
+        state: string;
+        experienceYears: number;
     }): Promise<{ doctors: Doctor[]; total: number }> {
         try {
             const skip = (page - 1) * limit;
@@ -42,6 +46,10 @@ export default class doctorRepository implements IdoctorRepository {
                 is_blocked: false,
             };
     
+            if (minPrice || maxPrice < Infinity) {
+                query.bookingfees = { $gte: minPrice || 0, $lte: maxPrice || Infinity };
+            }
+    
             if (search) {
                 query.$or = [
                     { name: { $regex: search, $options: 'i' } },
@@ -50,12 +58,11 @@ export default class doctorRepository implements IdoctorRepository {
                 ];
             }
     
-            if (specialization) {
-                query.expertise = specialization;
-            }
+            if (specialization) query.expertise = specialization;
+            if (state) query['address.state'] = { $regex: state, $options: 'i' };
+            if (experienceYears) query.experienceYears = { $gte: experienceYears };
     
-            
-    
+            // Fetch doctors and total count
             const [doctors, total] = await Promise.all([
                 Doctors.find(query).select('-password').skip(skip).limit(limit),
                 Doctors.countDocuments(query),
@@ -66,6 +73,8 @@ export default class doctorRepository implements IdoctorRepository {
             throw error;
         }
     }
+    
+    
     
     
 
@@ -87,7 +96,6 @@ export default class doctorRepository implements IdoctorRepository {
     
             return updatedDoctor;
         } catch (error) {
-            console.error('Error in editSingleDoctor:', error);
             throw error;
         }
     }
@@ -96,7 +104,6 @@ export default class doctorRepository implements IdoctorRepository {
 
     async insertSlots(slotsData: ISlot[]): Promise<ISlot[] | null> {
         try {
-            console.log('Inserting or Updating Slots Data:', slotsData);
 
             const promises = slotsData.map(slot => {
                 return Slots.findOneAndUpdate(
@@ -107,11 +114,9 @@ export default class doctorRepository implements IdoctorRepository {
             });
 
             const result = await Promise.all(promises);
-            console.log('Inserted or Updated Slots:', result);
             return result;
 
         } catch (error) {
-            console.error('Error in insertSlots:', error);
             throw error;
         }
     }
@@ -119,7 +124,6 @@ export default class doctorRepository implements IdoctorRepository {
 
 
     async fetchSlots(id: string, date: string): Promise<ISlot[] | null> {
-        console.log('entered fetch slots repo');
         try {
             const startDate = new Date(date);
             const endDate = new Date(date);
@@ -133,31 +137,25 @@ export default class doctorRepository implements IdoctorRepository {
                 }
             }).exec();
 
-            console.log('slotsssss', slots);
             return slots;
         } catch (error) {
-            console.error('Error fetching slots:', error);
             throw new Error('Error fetching slots');
         }
     }
 
 
     async deleteSlots(slotId: string, selectedShifts: string[]): Promise<ISlot | null> {
-        console.log('entered delete slots repo')
         try {
             const slot = await Slots.findById(slotId);
 
             if (!slot) {
-                console.log('Slot not found');
                 return null;
             }
             slot.shifts = slot.shifts.filter(shift => !selectedShifts.includes(shift));
             const updatedSlot = await slot.save();
 
-            console.log('Updated slot after deletion:', updatedSlot);
             return updatedSlot;
         } catch (error) {
-            console.error('Error in deleteSlots:', error);
             throw error;
         }
     }
@@ -174,10 +172,8 @@ export default class doctorRepository implements IdoctorRepository {
     }
 
     async fetchAppointments(doctorId: string): Promise<IBooking[] | null> {
-        console.log('entered fetchAppointments repo')
         try {
             const AppointmentData = await Booking.find({ doctorId }).populate('patientId').sort({ date: -1 })
-            console.log('fetched  appointment data', AppointmentData)
             return AppointmentData
         } catch (error) {
             throw error
@@ -185,7 +181,6 @@ export default class doctorRepository implements IdoctorRepository {
     }
 
     async getWalletHistory(doctorId: string): Promise<Doctor | null> {
-        console.log('entered wallet history repo');
         try {
             const walletData = await Doctors.findById(doctorId).select('WalletHistory Wallet').sort({date: -1})
             console.log(walletData);
@@ -205,9 +200,7 @@ export default class doctorRepository implements IdoctorRepository {
     }
 
     async appointments(date: string, doctorId: string): Promise<IBooking[] | null> {
-        console.log('entered appointment repository')
         try {
-            console.log('doctorid and date', doctorId, date)
             const inputDate = new Date(date);
             const isoDateString = inputDate.toISOString().split("T")[0];
             console.log("inputdate", inputDate)
@@ -229,7 +222,6 @@ export default class doctorRepository implements IdoctorRepository {
             }).sort({ createdAt: -1 }).exec();
             return notificationData;
         } catch (error) {
-            console.error("Error fetching notifications for doctor:", error);
             throw error;
         }
     }
@@ -241,7 +233,6 @@ export default class doctorRepository implements IdoctorRepository {
                 {isRead: true},
                 {new: true}
             )
-            console.log(updatedNotification)
             return updatedNotification
         } catch (error) {
             throw error

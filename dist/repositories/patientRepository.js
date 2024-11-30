@@ -37,7 +37,6 @@ class PatientRepository {
                 if (data) {
                     return null;
                 }
-                console.log('about to create user');
                 console.log(userData);
                 return yield userModel_1.default.create(userData);
             }
@@ -68,7 +67,6 @@ class PatientRepository {
     }
     editSinglePatient(userData) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Entered editSinglePatient repo ', userData.email);
             try {
                 const response = yield userModel_1.default.findOne({ email: userData.email }).exec();
                 console.log('response', response);
@@ -81,12 +79,9 @@ class PatientRepository {
     }
     postBooking(userData) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered postBooking respository');
             try {
-                console.log('doctorId:', userData.doctorId);
                 const isAvailable = yield bookingModel_1.default.find();
                 const doctor = yield doctorModel_1.default.findById(userData.doctorId);
-                console.log("Doctor found:", doctor);
                 if (!doctor)
                     throw new Error(`Doctor not found with ID: ${userData.doctorId}`);
                 const patient = yield userModel_1.default.findById(userData.patientId);
@@ -148,24 +143,20 @@ class PatientRepository {
                         message: doctorNotificationMessage,
                         bookingDetails: booking,
                     });
-                    console.log("Notification emitted to doctor:", doctor._id);
                     index_1.io.to(patientSocketId).emit("appointmentReminder", {
                         message: patientNotificationMessage,
                         bookingDetails: booking,
                     });
-                    console.log("Notification emitted to patient:", patient._id);
                 }
                 return booking;
             }
             catch (err) {
-                console.error("Error in postbookings:", err);
                 throw err;
             }
         });
     }
     fetchBookings(id, date) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered fetchBooking repo');
             try {
                 return yield bookingModel_1.default.find({ doctorId: id, date: date }).exec();
             }
@@ -176,7 +167,6 @@ class PatientRepository {
     }
     myBookings(patientId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered my bookings repo');
             try {
                 return bookingModel_1.default.find({ patientId: patientId })
                     .populate({
@@ -191,32 +181,9 @@ class PatientRepository {
             }
         });
     }
-    // async myBookings(patientId: string, page: number, limit: number): Promise<{ data: IBooking[]; totalCount: number }> {
-    //     console.log('Entered my bookings repository');
-    //     try {
-    //         const skip = (page - 1) * limit;
-    //         // Fetch paginated bookings
-    //         const bookings = await Booking.find({ patientId: patientId })
-    //             .populate({
-    //                 path: 'doctorId',
-    //                 populate: {
-    //                     path: 'expertise',
-    //                 },
-    //             })
-    //             .sort({ updatedAt: -1 })
-    //             .skip(skip) // Skip records for pagination
-    //             .limit(limit); // Limit the number of records
-    //         // Count total records
-    //         const totalCount = await Booking.countDocuments({ patientId: patientId });
-    //         return { data: bookings, totalCount };
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
     cancelBooking(bookingId) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            console.log('entered cancel booking repo');
             try {
                 const booking = yield bookingModel_1.default.findOne({ _id: bookingId });
                 if (!booking) {
@@ -257,7 +224,6 @@ class PatientRepository {
     }
     getWalletHistory(patientId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('enterd repo wallet ');
             try {
                 const walletData = yield userModel_1.default.findById(patientId).select('Wallet WalletHistory').sort({ "WalletHistory.date": -1 });
                 return walletData;
@@ -315,7 +281,6 @@ class PatientRepository {
                 return patient.favourite_doctors || null;
             }
             catch (error) {
-                console.error('Error in getFavouriteDoctors repository:', error);
                 throw error;
             }
         });
@@ -340,7 +305,6 @@ class PatientRepository {
                 return notificationData;
             }
             catch (error) {
-                console.error("Error fetching notifications for doctor:", error);
                 throw error;
             }
         });

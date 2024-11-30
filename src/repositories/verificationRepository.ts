@@ -15,7 +15,6 @@ export default class verificationRepository implements IverificationRepository {
     }
 
     async verifyOtp(email: string, enteredOtp: string): Promise<boolean> {
-        console.log('entered verify otp repository')
         try {
             const otpRecord = await Otp.findOne({ email }).sort({ createdAt: -1 }).exec();
             console.log('otpRecord: ',otpRecord)
@@ -24,7 +23,6 @@ export default class verificationRepository implements IverificationRepository {
                 await otpRecord.deleteOne();
                 return true
             } else {
-                console.log('app error vannu')
                 throw new AppError('Enter the correct OTP', 400);
                
             }
@@ -36,20 +34,15 @@ export default class verificationRepository implements IverificationRepository {
     
 
     async patientLogin(email: string): Promise<Patient | null> {
-        console.log('entered patient login repository', email)
         try {
-            console.log('/////////////////////////')
-            console.log(email)
-            console.log('typeeee:', typeof email)
+            
             return await Patients.findOne({email}).exec()
         } catch (error) {
-            console.log('patietlogin repo ////////// error')
             throw error
         }
     }
 
     async existingDoctor(email: string): Promise<Doctor | null> {
-        console.log('entered checking existing  doctor repository')
         try {
             return await Doctors.findOne({email}).exec()
         } catch (error) {
@@ -58,7 +51,6 @@ export default class verificationRepository implements IverificationRepository {
     }
 
     async adminLogin(email: string): Promise<Patient | null> {
-        console.log('entered admin login repository');
         try {
             const adminData = await Patients.findOne({email, is_admin: true}).exec()
             return adminData;

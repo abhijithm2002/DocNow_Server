@@ -28,18 +28,18 @@ export default class patientService implements IpatientService {
 
     async editPatient(userData: Partial<Patient>): Promise<Patient | null> {
         console.log('coming to edit patient service');
-        
+
         try {
             const data = await this._patientRepository.editSinglePatient(userData)
             console.log("updated", data)
-            if(data) {
+            if (data) {
                 data.name = userData.name ?? data.name
                 data.email = userData.email ?? data.email
                 data.mobile = userData.mobile ?? data.mobile
                 data.photo = userData.photo ?? data.photo
                 data.gender = userData.gender ?? data.gender
-                console.log('updated',data);
-                
+                console.log('updated', data);
+
                 await data.save();
                 return data;
             } else {
@@ -63,7 +63,7 @@ export default class patientService implements IpatientService {
         console.log("entered postbooking service")
         try {
             return await this._patientRepository.postBooking(userData)
-            
+
         } catch (error) {
             throw error
         }
@@ -95,7 +95,7 @@ export default class patientService implements IpatientService {
     //         throw error;
     //     }
     // }
-    
+
 
     async cancelBooking(bookingId: string): Promise<IBooking | null> {
         try {
@@ -124,12 +124,12 @@ export default class patientService implements IpatientService {
 
     async addFavouriteDoctor(patientId: string, doctorId: string): Promise<string> {
         try {
-          const message = await this._patientRepository.addFavouriteDoctor(patientId, doctorId);
-          return message;
+            const message = await this._patientRepository.addFavouriteDoctor(patientId, doctorId);
+            return message;
         } catch (error) {
-          throw error;
+            throw error;
         }
-      }
+    }
 
     async getFavouriteDoctors(patientId: string): Promise<mongoose.Types.ObjectId[] | null> {
         try {
@@ -152,13 +152,19 @@ export default class patientService implements IpatientService {
         limit,
         search,
         specialization,
-        
+        minPrice,
+        maxPrice,
+        state,
+        experienceYears,
     }: {
         page: number;
         limit: number;
         search: string;
         specialization: string;
-        
+        minPrice: number;
+        maxPrice: number;
+        state: string;
+        experienceYears: number;
     }): Promise<{ doctors: Doctor[]; total: number }> {
         try {
             return await this._doctorRespository.doctorFetch({
@@ -166,28 +172,31 @@ export default class patientService implements IpatientService {
                 limit,
                 search,
                 specialization,
-               
+                minPrice,
+                maxPrice,
+                state,
+                experienceYears
             });
         } catch (error) {
             throw error;
         }
     }
-    
-    
+
+
 
 
     async postRating(patientId: string, doctorId: string, rating: number): Promise<Doctor | null> {
         try {
             const doctor = await this._doctorRespository.fetchDoctor(doctorId)
-            if(doctor) {
-                if(!doctor?.review) {
+            if (doctor) {
+                if (!doctor?.review) {
                     doctor.review = []
                 }
                 const patientObjectId = new mongoose.Types.ObjectId(patientId);
-    
+
                 const existingReviewIndex = doctor?.review.findIndex((review) => review.patientId.toString() === patientObjectId.toString())
-    
-                if(existingReviewIndex > -1) {
+
+                if (existingReviewIndex > -1) {
                     doctor.review[existingReviewIndex].rating = rating;
                 } else {
                     const newRating = {
@@ -196,9 +205,9 @@ export default class patientService implements IpatientService {
                     }
                     doctor?.review.push(newRating)
                 }
-    
+
                 const totalRating = doctor?.review.reduce((acc, item) => acc + item.rating, 0);
-    
+
                 const averageRating = totalRating / doctor?.review.length;
                 doctor.rating = averageRating;
                 await doctor?.save();
@@ -206,7 +215,7 @@ export default class patientService implements IpatientService {
             } else {
                 return null
             }
-           
+
         } catch (error) {
             throw error
         }
@@ -235,5 +244,5 @@ export default class patientService implements IpatientService {
             throw error
         }
     }
-      
+
 }

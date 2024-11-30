@@ -22,7 +22,6 @@ const index_1 = require("../index");
 class MessageRepository {
     sendMessage(id, senderId, message, messageType, senderName) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered sendmessage repo');
             try {
                 const receiverId = id;
                 const newMessage = new messageModel_1.default({
@@ -71,8 +70,6 @@ class MessageRepository {
                 });
                 console.log('bookings', bookings);
                 const patientIds = bookings.map((booking) => booking.patientId);
-                console.log('/////////////////////////////////');
-                console.log("patientIds", patientIds);
                 const patients = yield userModel_1.default.find({ _id: { $in: patientIds } }).sort({
                     _id: -1,
                 });
@@ -85,7 +82,6 @@ class MessageRepository {
     }
     conversationPatients(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('enterd patient conversation');
             try {
                 const bookings = yield bookingModel_1.default.find({
                     patientId: id,
@@ -93,7 +89,6 @@ class MessageRepository {
                 });
                 const doctorIds = bookings.map((booking) => booking.doctorId);
                 const doctors = yield doctorModel_1.default.find({ _id: { $in: doctorIds } });
-                console.log('doctors', doctors);
                 return doctors;
             }
             catch (error) {
@@ -101,77 +96,12 @@ class MessageRepository {
             }
         });
     }
-    //   async conversationDoctors(id: string): Promise<any[]> {
-    //     try {
-    //         const bookings = await Booking.find({
-    //             doctorId: id,
-    //             status: { $ne: "Canceled" },
-    //         });
-    //         const patientIds = bookings.map((booking) => booking.patientId);
-    //         // Get patients and their conversations with the last message
-    //         const patients = await Patients.find({ _id: { $in: patientIds } }).sort({ _id: -1 });
-    //         // Fetch conversations and populate the last message
-    //         const conversations = await Conversation.find({
-    //             participants: { $in: patientIds }
-    //         })
-    //         .populate('lastMessage', 'message createdAt') // Populate only the message and createdAt fields
-    //         .sort({ updatedAt: -1 });
-    //         // Map each patient to their corresponding conversation and last message
-    //         const patientConversations = patients.map((patient) => {
-    //           const conversation = conversations.find((conv) =>
-    //               conv.participants.some(
-    //                   (participantId) => participantId.equals(new mongoose.Types.ObjectId(patient._id))
-    //               )
-    //           );
-    //           return {
-    //               patient,
-    //               lastMessage: conversation?.lastMessage || null,
-    //           };
-    //       });
-    //         return patientConversations;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
-    // async conversationPatients(id: string): Promise<any[]> {
-    //     try {
-    //         const bookings = await Booking.find({
-    //             patientId: id,
-    //             status: { $ne: "Canceled" },
-    //         });
-    //         const doctorIds = bookings.map((booking) => booking.doctorId);
-    //         // Get doctors and their conversations with the last message
-    //         const doctors = await Doctors.find({ _id: { $in: doctorIds } });
-    //         // Fetch conversations and populate the last message
-    //         const conversations = await Conversation.find({
-    //             participants: { $in: doctorIds }
-    //         })
-    //         .populate('lastMessage', 'message createdAt') // Populate only the message and createdAt fields
-    //         .sort({ updatedAt: -1 });
-    //         // Map each doctor to their corresponding conversation and last message
-    //         const doctorConversations = doctors.map((doctor) => {
-    //           const conversation = conversations.find((conv) =>
-    //               conv.participants.some(
-    //                   (participantId) => participantId.equals(doctor._id as mongoose.Types.ObjectId)
-    //               )
-    //           );
-    //           return {
-    //               doctor,
-    //               lastMessage: conversation?.lastMessage || null,
-    //           };
-    //       });
-    //         return doctorConversations;
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
     getMessages(id, senderId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conversation = yield conversationModel_1.default.findOne({
                     participants: { $all: [senderId, id] },
                 }).populate("messages");
-                console.log('////conversation//////', conversation);
                 return conversation;
             }
             catch (error) {

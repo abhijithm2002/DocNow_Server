@@ -328,13 +328,34 @@ export default class patientController implements IpatientController {
 
   async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
     try {
-        const { page = 1, limit = 10, search = '', specialization = ''} = req.query;
+      const {
+        page = 1,
+        limit = 10,
+        search = '',
+        specialization = '',
+        minPrice ,
+        maxPrice ,
+        state,
+        experienceYears ,
+    } = req.query;
+    console.log('page',page)
+    console.log('limit',limit)
+    console.log('search',search)
+    console.log('specialization',specialization)
+    console.log('minPrice',minPrice)
+    console.log('maxprice',maxPrice)
+    console.log('state',state)
+    console.log('experienceYears',experienceYears)
 
         const { doctors, total } = await this._patientService.fetchDoctorList({
             page: Number(page),
             limit: Number(limit),
             search: String(search),
             specialization: String(specialization),
+            minPrice: Number(minPrice),
+            maxPrice: Number(maxPrice),
+            state: String(state),
+            experienceYears: Number(experienceYears),
             
         });
 

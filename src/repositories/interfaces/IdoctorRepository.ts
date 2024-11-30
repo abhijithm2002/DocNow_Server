@@ -7,7 +7,7 @@ import { Patient } from "../../models/userModel";
 export interface IdoctorRepository {
     signupDoctor(userData: Partial<Doctor>): Promise<Doctor | null>
     // doctorFetch(): Promise<Doctor[] | null>
-    doctorFetch({ page, limit, search, specialization }: { page: number; limit: number; search: string; specialization: string }): Promise<{ doctors: Doctor[]; total: number }> 
+    doctorFetch({ page, limit, search, specialization,minPrice,maxPrice,state,experienceYears }: { page: number; limit: number; search: string; specialization: string,minPrice: number,maxPrice: number, state: string,experienceYears: number}): Promise<{ doctors: Doctor[]; total: number }>
     fetchDoctor(id: string): Promise<Doctor | null>
     editSingleDoctor(doctorData: Partial<Doctor>): Promise<Doctor | null>
     insertSlots(slotsData: ISlot[]): Promise<ISlot[] | null>
