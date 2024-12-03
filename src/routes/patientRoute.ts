@@ -35,6 +35,8 @@ router.post('/postRating',protect, PatientController.postRating.bind(PatientCont
 router.get('/fetchAdmin', PatientController.fetchAdmin.bind(PatientController))
 router.get('/getNotification/:patientId',protect, PatientController.getNotification.bind(PatientController))
 router.patch('/markAsRead/:notificationId/read',protect, PatientController.markAsRead.bind(PatientController))
+router.post('/postContactData', PatientController.postContact.bind(PatientController))
+
 
 
 export const patientRoutes = router;

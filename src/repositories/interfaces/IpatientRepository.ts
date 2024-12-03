@@ -4,6 +4,7 @@ import { IBanner } from "../../models/bannerModel";
 import { Doctor } from "../../models/doctorModel";
 import mongoose from "mongoose";
 import { INotifications } from "../../models/notificationModel";
+import { IContact } from "../../models/contactModel";
 
 export interface IpatientRepository {
     signupPatient(userData: Partial<Patient>): Promise<Patient | null >
@@ -22,4 +23,5 @@ export interface IpatientRepository {
     fetchAdmin(): Promise<Patient | null>
     getNotification(patientId:string):Promise<INotifications[]|null>
     markAsRead(notificationId:string):Promise<INotifications|null>
+    postContact(formData: Partial<IContact>): Promise<IContact | null>
 }

@@ -7,6 +7,7 @@ import Banner, { IBanner } from "../models/bannerModel";
 import { io } from '../index'
 import { getReceiverSocketId } from "../Socket/socket";
 import Notification,{INotifications} from "../models/notificationModel";
+import Contact, { IContact } from "../models/contactModel";
 
 
 export default class PatientRepository implements IpatientRepository {
@@ -307,5 +308,14 @@ export default class PatientRepository implements IpatientRepository {
             throw error
         }
     }
+
+     async postContact(formData: Partial<IContact>): Promise<IContact | null> {
+         try {
+            console.log(formData)
+            return await Contact.create(formData)
+         } catch (error) {
+            throw error
+         }
+     }
 
 }

@@ -20,6 +20,7 @@ export interface IpatientController{
     fetchAdmin(req: Request, res: Response, next: NextFunction): void;  
     getNotification(req: Request, res: Response, next: NextFunction): void;
     markAsRead(req: Request, res: Response, next: NextFunction): void;
+    postContact(req: Request, res: Response, next: NextFunction): void;
 
 
 }

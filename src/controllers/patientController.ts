@@ -451,4 +451,20 @@ export default class patientController implements IpatientController {
       });
     }
   }
+
+
+  async postContact(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {name, email, message} = req.body;
+      const formData = {name, email, message}
+      const contactData = await this._patientService.postContact(formData)
+      if(contactData) {
+        res.status(200).json({message: 'contact data submitting successfull'})
+      } else {
+        res.status(400).json({message: 'submitting contact data unsuccessfull'})
+      }
+    } catch (error) {
+      res.status(500).json({message: 'internal server error'})
+    }
+  }
 }

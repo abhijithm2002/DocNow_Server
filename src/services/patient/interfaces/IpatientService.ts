@@ -4,6 +4,7 @@ import { IBooking } from "../../../models/bookingModel";
 import { IBanner } from "../../../models/bannerModel";
 import mongoose from "mongoose";
 import { INotifications } from "../../../models/notificationModel";
+import { IContact } from "../../../models/contactModel";
 
 export interface IpatientService {
     signupPatient(userData: Partial<Patient>): Promise<Patient | null>
@@ -24,4 +25,5 @@ export interface IpatientService {
     fetchAdmin(): Promise<Patient | null>
     getNotification(patientId: string): Promise<INotifications[] | null>
     markAsRead(notificationId: string): Promise<INotifications | null>
+    postContact(formData: Partial<IContact>): Promise<IContact | null>
 }

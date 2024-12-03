@@ -7,6 +7,7 @@ import { IBooking } from "../../models/bookingModel";
 import { IBanner } from "../../models/bannerModel";
 import mongoose from "mongoose";
 import { INotifications } from "../../models/notificationModel";
+import { IContact } from "../../models/contactModel";
 
 
 
@@ -240,6 +241,14 @@ export default class patientService implements IpatientService {
     async markAsRead(notificationId: string): Promise<INotifications | null> {
         try {
             return await this._patientRepository.markAsRead(notificationId)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async postContact(formData: Partial<IContact>): Promise<IContact | null> {
+        try {
+          return  await this._patientRepository.postContact(formData)
         } catch (error) {
             throw error
         }
