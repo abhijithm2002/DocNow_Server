@@ -452,7 +452,7 @@ export default class patientController implements IpatientController {
     }
   }
 
-
+  
   async postContact(req: Request, res: Response, next: NextFunction) {
     try {
       const {name, email, message} = req.body;
