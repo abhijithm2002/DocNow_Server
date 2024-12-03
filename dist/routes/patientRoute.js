@@ -37,4 +37,5 @@ router.post('/postRating', authMiddleware_2.default, PatientController.postRatin
 router.get('/fetchAdmin', PatientController.fetchAdmin.bind(PatientController));
 router.get('/getNotification/:patientId', authMiddleware_2.default, PatientController.getNotification.bind(PatientController));
 router.patch('/markAsRead/:notificationId/read', authMiddleware_2.default, PatientController.markAsRead.bind(PatientController));
+router.post('/postContactData', PatientController.postContact.bind(PatientController));
 exports.patientRoutes = router;

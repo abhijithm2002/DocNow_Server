@@ -20,6 +20,7 @@ const bannerModel_1 = __importDefault(require("../models/bannerModel"));
 const index_1 = require("../index");
 const socket_1 = require("../Socket/socket");
 const notificationModel_1 = __importDefault(require("../models/notificationModel"));
+const contactModel_1 = __importDefault(require("../models/contactModel"));
 class PatientRepository {
     signupPatient(userData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -315,6 +316,17 @@ class PatientRepository {
                 const updatedNotification = yield notificationModel_1.default.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
                 console.log(updatedNotification);
                 return updatedNotification;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    postContact(formData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log(formData);
+                return yield contactModel_1.default.create(formData);
             }
             catch (error) {
                 throw error;

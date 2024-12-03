@@ -250,5 +250,15 @@ class patientService {
             }
         });
     }
+    postContact(formData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this._patientRepository.postContact(formData);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
 }
 exports.default = patientService;

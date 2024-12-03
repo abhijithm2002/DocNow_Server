@@ -459,5 +459,23 @@ class patientController {
             }
         });
     }
+    postContact(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { name, email, message } = req.body;
+                const formData = { name, email, message };
+                const contactData = yield this._patientService.postContact(formData);
+                if (contactData) {
+                    res.status(200).json({ message: 'contact data submitting successfull' });
+                }
+                else {
+                    res.status(400).json({ message: 'submitting contact data unsuccessfull' });
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: 'internal server error' });
+            }
+        });
+    }
 }
 exports.default = patientController;
