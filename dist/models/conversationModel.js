@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const conversationSchema = new mongoose_1.Schema({
@@ -40,26 +50,9 @@ const conversationSchema = new mongoose_1.Schema({
     ],
     lastMessage: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'Message', // Reference to Message model
-        required: false // Optional, depending on if you want this to be required
+        ref: 'Message',
+        required: false
     },
 }, { timestamps: true });
 const Conversation = (0, mongoose_1.model)('Conversation', conversationSchema);
 exports.default = Conversation;
-// // Conversation Model
-// const conversationSchema = new Schema({
-//     participants: [
-//         { type: Schema.Types.ObjectId, ref: 'Users' }
-//     ],
-//     lastMessage: { type: Schema.Types.ObjectId, ref: 'Message' },
-// }, { timestamps: true });
-// const Conversation = mongoose.model('Conversation', conversationSchema);
-// // Message Model
-// const messageSchema = new Schema({
-//     conversationId: { type: Schema.Types.ObjectId, ref: 'Conversation', required: true },
-//     senderId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
-//     messageType: { type: String, enum: ['text', 'voice', 'image'], required: true },
-//     message: { type: String, required: true },
-//     createdAt: { type: Date, default: Date.now }
-// }, { timestamps: true });
-// const Message = mongoose.model('Message', messageSchema);

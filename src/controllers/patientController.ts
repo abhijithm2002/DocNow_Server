@@ -21,10 +21,9 @@ export default class patientController implements IpatientController {
   }
 
   async signupPatient(req: Request, res: Response, next: NextFunction) {
-    console.log('Entered signupPatient controller method');
+   
     try {
       const { name, email, mobile, address, gender, password, photo, is_verified, role } = req.body;
-      console.log("Signup payload:", req.body);
       const hashedPassword = await bcrypt.hash(password, 10);
       const data = { name, email, address, mobile, gender, password: hashedPassword, photo, role };
       const userData = await this._patientService.signupPatient(data);
@@ -41,10 +40,9 @@ export default class patientController implements IpatientController {
   }
 
   async editPatient(req: Request, res: Response, next: NextFunction) {
-    console.log('coming to edit patient controller')
+   
     try {
       const { name, email, photo, mobile, gender } = req.body;
-      console.log('body data', req.body)
       const userData = { name, email, photo, mobile, gender }
       const data = await this._patientService.editPatient(userData);
       return res.status(200).json({ message: "Profile Updated", name, email, photo, mobile })
@@ -55,7 +53,7 @@ export default class patientController implements IpatientController {
   }
 
   async fetchDoctorDetails(req: Request, res: Response, next: NextFunction) {
-    console.log("entered fetchDoctorDetails controller")
+   
     try {
       const { id } = req.query
       console.log(id)
@@ -72,11 +70,9 @@ export default class patientController implements IpatientController {
   }
 
   async fetchSlots(req: Request, res: Response, next: NextFunction) {
-    console.log('entered user fetchSlots controller')
+ 
     try {
       const { id, date } = req.query
-      console.log('id', id)
-      console.log('date...', date)
       const slots = await this._doctorService.fetchSlots(id as string, date as string)
       if (slots) {
         return res.status(200).json({ message: 'slot fetched successfully', slots })
@@ -90,7 +86,7 @@ export default class patientController implements IpatientController {
   }
 
   async createPayment(req: Request, res: Response, next: NextFunction) {
-    console.log('coming to create payment');
+  
 
     const { amount, currency } = req.body;
     console.log('Amount:', amount);
@@ -120,7 +116,7 @@ export default class patientController implements IpatientController {
 
 
   async verifyPayment(req: Request, res: Response, next: NextFunction) {
-    console.log('coming to verifypayment');
+  
 
     const { response } = req.body
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
@@ -145,7 +141,7 @@ export default class patientController implements IpatientController {
 
 
   async postBooking(req: Request, res: Response, next: NextFunction) {
-    console.log('entered post booking controller');
+  
     try {
       const { doctorId, userId, selectedShift, selectedDate, fee } = req.body
       const userData = { doctorId, patientId: userId, shift: selectedShift, date: selectedDate, fee }
@@ -165,7 +161,7 @@ export default class patientController implements IpatientController {
   }
 
   async fetchBookings(req: Request, res: Response, next: NextFunction) {
-    console.log('enterd fetchBookings controller');
+
 
     try {
       const { id, date } = req.query
@@ -185,7 +181,7 @@ export default class patientController implements IpatientController {
   }
 
   async myBookings(req: Request, res: Response, next: NextFunction) {
-    console.log('entered my bookings controller')
+
     try {
       const { patientId } = req.query;
       const data = await this._patientService.myBookings(patientId as string)
@@ -201,43 +197,11 @@ export default class patientController implements IpatientController {
     }
   }
 
-  //   async myBookings(req: Request, res: Response, next: NextFunction) {
-  //     console.log('Entered my bookings controller');
-  //     try {
-  //       const {patientId} = req.params;
-  //         const {  page = '1', limit = '10' } = req.query;
-  //       console.log('patientid',patientId)
-  //       console.log('page',page)
-  //       console.log('limit',limit)
-  //         const pageNumber = parseInt(page as string, 10);
-  //         const limitNumber = parseInt(limit as string, 10);
 
-  //         const { data, totalCount } = await this._patientService.myBookings(
-  //             patientId as string,
-  //             pageNumber,
-  //             limitNumber
-  //         );
-
-  //         if (data) {
-  //             return res.status(200).json({
-  //                 message: 'My bookings fetched successfully',
-  //                 data,
-  //                 totalCount,
-  //                 totalPages: Math.ceil(totalCount / limitNumber),
-  //                 currentPage: pageNumber,
-  //             });
-  //         } else {
-  //             return res.status(400).json({ message: 'No bookings found' });
-  //         }
-  //     } catch (error) {
-  //         console.error('Error in fetch my bookings:', error);
-  //         res.status(500).json({ message: 'Internal Server Error' });
-  //     }
-  // }
 
 
   async cancelBooking(req: Request, res: Response, next: NextFunction) {
-    console.log('entered cancel booking controller');
+   
     try {
       const bookingId = req.params.bookingId
       console.log('booking id', bookingId);
@@ -256,7 +220,7 @@ export default class patientController implements IpatientController {
   }
 
   async getWalletHistory(req: Request, res: Response, next: NextFunction) {
-    console.log('entered wallet history controller');
+  
     try {
       const patientId = req.params.patientId;
       const walletData = await this._patientService.getWalletHistory(patientId);
@@ -302,7 +266,6 @@ export default class patientController implements IpatientController {
   async getFavouriteDoctors(req: Request, res: Response, next: NextFunction) {
     try {
       const { patientId } = req.params;
-      console.log('idddd', patientId)
       const favouriteDoctors = await this._patientService.getFavouriteDoctors(patientId);
 
       if (!favouriteDoctors) {
@@ -317,14 +280,7 @@ export default class patientController implements IpatientController {
   }
 
 
-  // async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
-  //   try {
-  //     const doctorData = await this._patientService.fetchDoctorList()
-  //     return res.status(200).json({ doctorData })
-  //   } catch (error) {
-  //     return res.status(500).json({ message: 'Internal Server Error' });
-  //   }
-  // }
+
 
   async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
     try {
@@ -338,14 +294,7 @@ export default class patientController implements IpatientController {
         state,
         experienceYears ,
     } = req.query;
-    console.log('page',page)
-    console.log('limit',limit)
-    console.log('search',search)
-    console.log('specialization',specialization)
-    console.log('minPrice',minPrice)
-    console.log('maxprice',maxPrice)
-    console.log('state',state)
-    console.log('experienceYears',experienceYears)
+    
 
         const { doctors, total } = await this._patientService.fetchDoctorList({
             page: Number(page),

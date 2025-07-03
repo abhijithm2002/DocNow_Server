@@ -1,11 +1,4 @@
 "use strict";
-// import nodemailer from 'nodemailer';
-// import otpGenerator from 'otp-generator';
-// import dotenv from 'dotenv';
-// import { join } from 'path';
-// import verificationRepository from '../../repositories/verificationRepository';
-// import { IverficationService } from './interfaces/IverificationService';
-// import { Patient } from '../../models/userModel';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,86 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// dotenv.config({ path: join(__dirname, '../../../.env') });
-// export default class VerificationService implements IverficationService {
-//     private _verificationRepository: verificationRepository;
-//     constructor() {
-//         this._verificationRepository = new verificationRepository();
-//     }
-//     private transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.USER_MAIL,
-//             pass: process.env.PASS,
-//         },
-//     });
-//     // async otpverify(email: string): Promise<Patient | null> {
-//     //     console.log('entered verificationservice otpverify');
-//     //     try {
-//     //         const userData = await this._verificationRepository.otpverify(email);
-//     //         if (userData) {
-//     //             userData.is_verified = true;
-//     //             await userData.save();
-//     //             return userData;
-//     //         } else {
-//     //             return null;
-//     //         }
-//     //     } catch (error) {
-//     //         throw error;
-//     //     }
-//     // }
-//     async otpverify(email: string, enteredOtp: string): Promise<boolean> {
-//         console.log('entered verificationservice otpverify');
-//         try {
-//             return await this._verificationRepository.verifyOtp(email, enteredOtp);
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-//     public async SendOtpEmail(to: string, subject: string, otp: string): Promise<void> {
-//         console.log('entered verificationservice SendOtpEmail');
-//         const mailOptions = {
-//             from: process.env.USER_EMAIL!,
-//             to,
-//             subject,
-//             text: `Your OTP code is ${otp}`,
-//             html: `<p>Your OTP code is <strong>${otp}</strong></p>`,
-//         };
-//         try {
-//             await this._verificationRepository.storeOtp(to, otp);
-//             await this.transporter.sendMail(mailOptions);
-//             console.log('OTP Email sent successfully', otp);
-//         } catch (error) {
-//             console.error('Error sending OTP Email', error);
-//             throw new Error('Failed to send OTP Email');
-//         }
-//     }
-//     // public async SendOtpEmail(to: string, subject: string, otp: string): Promise<void> {
-//     //     const mailOptions = {
-//     //         from: process.env.USER_MAIL!,
-//     //         to,
-//     //         subject,
-//     //         text: `Your OTP code is ${otp}`,
-//     //         html: `<p>Your OTP code is <strong>${otp}</strong></p>`,
-//     //     };
-//     //     try {
-//     //         await this.transporter.sendMail(mailOptions);
-//     //         console.log('OTP Email sent successfully',otp);
-//     //     } catch (error) {
-//     //         console.error('Error sending OTP Email', error);
-//     //         throw new Error('Failed to send OTP Email');
-//     //     }
-//     // }
-//     public generateOtp(): string {
-//         const otp = otpGenerator.generate(4, {
-//             upperCaseAlphabets: false,
-//             lowerCaseAlphabets: false,
-//             specialChars: false,
-//         });
-//         console.log('Generated OTP:', otp);
-//         return otp;
-//     }
-// }
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const otp_generator_1 = __importDefault(require("otp-generator"));
 const dotenv_1 = __importDefault(require("dotenv"));

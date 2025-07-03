@@ -114,6 +114,7 @@ export default class doctorRepository implements IdoctorRepository {
             });
 
             const result = await Promise.all(promises);
+            console.log('result in repo of updateing slots', result)
             return result;
 
         } catch (error) {

@@ -22,8 +22,8 @@ const conversationSchema: Schema<IConversation> = new Schema({
     ],
     lastMessage: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Message', // Reference to Message model
-        required: false // Optional, depending on if you want this to be required
+        ref: 'Message', 
+        required: false 
     },
 },{timestamps: true})
 
@@ -32,23 +32,4 @@ const Conversation: Model<IConversation> = model<IConversation>('Conversation',c
 export default Conversation;
 
 
-// // Conversation Model
-// const conversationSchema = new Schema({
-//     participants: [
-//         { type: Schema.Types.ObjectId, ref: 'Users' }
-//     ],
-//     lastMessage: { type: Schema.Types.ObjectId, ref: 'Message' },
-// }, { timestamps: true });
 
-// const Conversation = mongoose.model('Conversation', conversationSchema);
-
-// // Message Model
-// const messageSchema = new Schema({
-//     conversationId: { type: Schema.Types.ObjectId, ref: 'Conversation', required: true },
-//     senderId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
-//     messageType: { type: String, enum: ['text', 'voice', 'image'], required: true },
-//     message: { type: String, required: true },
-//     createdAt: { type: Date, default: Date.now }
-// }, { timestamps: true });
-
-// const Message = mongoose.model('Message', messageSchema);

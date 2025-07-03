@@ -96,6 +96,7 @@ class doctorRepository {
                     return slotModel_1.default.findOneAndUpdate({ doctorId: slot.doctorId, date: slot.date }, { shifts: slot.shifts, createdAt: slot.createdAt }, { upsert: true, new: true });
                 });
                 const result = yield Promise.all(promises);
+                console.log('result in repo of updateing slots', result);
                 return result;
             }
             catch (error) {

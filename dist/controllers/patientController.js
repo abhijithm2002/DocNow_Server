@@ -28,10 +28,8 @@ class patientController {
     }
     signupPatient(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Entered signupPatient controller method');
             try {
                 const { name, email, mobile, address, gender, password, photo, is_verified, role } = req.body;
-                console.log("Signup payload:", req.body);
                 const hashedPassword = yield bcrypt_1.default.hash(password, 10);
                 const data = { name, email, address, mobile, gender, password: hashedPassword, photo, role };
                 const userData = yield this._patientService.signupPatient(data);
@@ -49,10 +47,8 @@ class patientController {
     }
     editPatient(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('coming to edit patient controller');
             try {
                 const { name, email, photo, mobile, gender } = req.body;
-                console.log('body data', req.body);
                 const userData = { name, email, photo, mobile, gender };
                 const data = yield this._patientService.editPatient(userData);
                 return res.status(200).json({ message: "Profile Updated", name, email, photo, mobile });
@@ -65,7 +61,6 @@ class patientController {
     }
     fetchDoctorDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("entered fetchDoctorDetails controller");
             try {
                 const { id } = req.query;
                 console.log(id);
@@ -85,11 +80,8 @@ class patientController {
     }
     fetchSlots(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered user fetchSlots controller');
             try {
                 const { id, date } = req.query;
-                console.log('id', id);
-                console.log('date...', date);
                 const slots = yield this._doctorService.fetchSlots(id, date);
                 if (slots) {
                     return res.status(200).json({ message: 'slot fetched successfully', slots });
@@ -105,7 +97,6 @@ class patientController {
     }
     createPayment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('coming to create payment');
             const { amount, currency } = req.body;
             console.log('Amount:', amount);
             console.log('Currency:', currency);
@@ -131,7 +122,6 @@ class patientController {
     }
     verifyPayment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('coming to verifypayment');
             const { response } = req.body;
             const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
             console.log('razorpay signature', razorpay_signature);
@@ -155,7 +145,6 @@ class patientController {
     }
     postBooking(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered post booking controller');
             try {
                 const { doctorId, userId, selectedShift, selectedDate, fee } = req.body;
                 const userData = { doctorId, patientId: userId, shift: selectedShift, date: selectedDate, fee };
@@ -176,7 +165,6 @@ class patientController {
     }
     fetchBookings(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('enterd fetchBookings controller');
             try {
                 const { id, date } = req.query;
                 console.log('id', id);
@@ -196,7 +184,6 @@ class patientController {
     }
     myBookings(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered my bookings controller');
             try {
                 const { patientId } = req.query;
                 const data = yield this._patientService.myBookings(patientId);
@@ -213,40 +200,8 @@ class patientController {
             }
         });
     }
-    //   async myBookings(req: Request, res: Response, next: NextFunction) {
-    //     console.log('Entered my bookings controller');
-    //     try {
-    //       const {patientId} = req.params;
-    //         const {  page = '1', limit = '10' } = req.query;
-    //       console.log('patientid',patientId)
-    //       console.log('page',page)
-    //       console.log('limit',limit)
-    //         const pageNumber = parseInt(page as string, 10);
-    //         const limitNumber = parseInt(limit as string, 10);
-    //         const { data, totalCount } = await this._patientService.myBookings(
-    //             patientId as string,
-    //             pageNumber,
-    //             limitNumber
-    //         );
-    //         if (data) {
-    //             return res.status(200).json({
-    //                 message: 'My bookings fetched successfully',
-    //                 data,
-    //                 totalCount,
-    //                 totalPages: Math.ceil(totalCount / limitNumber),
-    //                 currentPage: pageNumber,
-    //             });
-    //         } else {
-    //             return res.status(400).json({ message: 'No bookings found' });
-    //         }
-    //     } catch (error) {
-    //         console.error('Error in fetch my bookings:', error);
-    //         res.status(500).json({ message: 'Internal Server Error' });
-    //     }
-    // }
     cancelBooking(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered cancel booking controller');
             try {
                 const bookingId = req.params.bookingId;
                 console.log('booking id', bookingId);
@@ -266,7 +221,6 @@ class patientController {
     }
     getWalletHistory(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('entered wallet history controller');
             try {
                 const patientId = req.params.patientId;
                 const walletData = yield this._patientService.getWalletHistory(patientId);
@@ -318,7 +272,6 @@ class patientController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { patientId } = req.params;
-                console.log('idddd', patientId);
                 const favouriteDoctors = yield this._patientService.getFavouriteDoctors(patientId);
                 if (!favouriteDoctors) {
                     return res.status(404).json({ message: 'No favorite doctors found' });
@@ -332,26 +285,10 @@ class patientController {
             }
         });
     }
-    // async fetchDoctorList(req: Request, res: Response, next: NextFunction) {
-    //   try {
-    //     const doctorData = await this._patientService.fetchDoctorList()
-    //     return res.status(200).json({ doctorData })
-    //   } catch (error) {
-    //     return res.status(500).json({ message: 'Internal Server Error' });
-    //   }
-    // }
     fetchDoctorList(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { page = 1, limit = 10, search = '', specialization = '', minPrice, maxPrice, state, experienceYears, } = req.query;
-                console.log('page', page);
-                console.log('limit', limit);
-                console.log('search', search);
-                console.log('specialization', specialization);
-                console.log('minPrice', minPrice);
-                console.log('maxprice', maxPrice);
-                console.log('state', state);
-                console.log('experienceYears', experienceYears);
                 const { doctors, total } = yield this._patientService.fetchDoctorList({
                     page: Number(page),
                     limit: Number(limit),
