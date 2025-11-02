@@ -31,7 +31,7 @@ export interface Patient extends Document {
     mobile?: number,
     gender?: string,
     photo ?: string,
-    _id ?: string,
+    _id : string,
     is_doctor?: boolean,
     is_admin?: boolean;
     is_blocked ?: boolean;
